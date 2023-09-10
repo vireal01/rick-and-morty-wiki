@@ -11,8 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmortywiki.R
+import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.di.AppComponent
-import com.example.rickandmortywiki.network.models.Episode
 import com.example.rickandmortywiki.utils.KEY_SCREEN
 import com.example.rickandmortywiki.utils.daggerViewModel
 
@@ -28,12 +28,12 @@ class EpisodesFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        viewModel.getAllEpisodesData()
+//        viewModel.getAllEpisodesData()
 
         val rootView = inflater.inflate(R.layout.episodes_list_fragment, container, false)
 
         val recyclerAdapter = EpisodesRecyclerViewAdapter(object : EpisodesRecyclerViewAdapter.OnItemClickListener {
-            override fun onItemClick(episode: Episode) {
+            override fun onItemClick(episode: EpisodeEntity) {
                 viewModel.onEpisodeClick(episode)
             }
         })

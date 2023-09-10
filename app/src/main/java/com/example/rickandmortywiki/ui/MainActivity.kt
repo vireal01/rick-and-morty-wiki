@@ -24,7 +24,6 @@ class MainActivity: AppCompatActivity() {
                 add<EpisodesFragment>(R.id.fragment_container)
             }
         }
-
     }
 
     override fun onResume() {

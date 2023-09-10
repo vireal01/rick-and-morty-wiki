@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmortywiki.R
-import com.example.rickandmortywiki.network.models.Episode
+import com.example.rickandmortywiki.data.entities.EpisodeEntity
 
 class EpisodesRecyclerViewAdapter(private val itemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<EpisodesRecyclerViewAdapter.ViewHolder>() {
 
-    private val dataSet = mutableListOf<Episode>()
+    private val dataSet = mutableListOf<EpisodeEntity>()
 
-    fun setItems(newData: List<Episode>) {
+    fun setItems(newData: List<EpisodeEntity>) {
         dataSet.clear()
         dataSet.addAll(newData)
         notifyDataSetChanged()
@@ -50,7 +50,7 @@ class EpisodesRecyclerViewAdapter(private val itemClickListener: OnItemClickList
     }
 
     interface OnItemClickListener {
-        fun onItemClick(episode: Episode)
+        fun onItemClick(episode: EpisodeEntity)
     }
 
 

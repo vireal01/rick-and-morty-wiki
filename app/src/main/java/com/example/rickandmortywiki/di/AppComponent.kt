@@ -9,7 +9,9 @@ import com.example.rickandmortywiki.ui.charactersList.CharactersListViewModel
 import com.example.rickandmortywiki.ui.episodes.EpisodesViewModel
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
+@Singleton
 @Component(modules = [AppModule::class])
 interface AppComponent {
 

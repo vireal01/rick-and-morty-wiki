@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.navigation.Router
 import com.example.rickandmortywiki.network.api.Api
 import com.example.rickandmortywiki.network.models.Character
@@ -39,7 +40,7 @@ class CharactersListViewModel @AssistedInject constructor(
     private fun addNewCharacterToTheList(characterId: Int) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             val character = apiService.getCharacter(characterId)
-            character.characterImageBitmap = getImageBitmap(character)
+            character.characterImageBitmap = getImageBitmap(character.image)
             character.appearsInEpisodes = getListOfEpisodesCharacterAppears(character)
             withContext(Dispatchers.Main) {
                 addCharacter(character = character)
@@ -55,11 +56,11 @@ class CharactersListViewModel @AssistedInject constructor(
         router.closeScreen()
     }
 
-    fun showListOfCharactersOfEpisode(episode: Episode) {
+    fun showListOfCharactersOfEpisode(episode: EpisodeEntity) {
         _charactersList.value = emptyList()
         episode.characters?.forEach {
-            val characterId = parseCharacterIdFromUrl(it).toInt()
-            addNewCharacterToTheList(characterId)
+//            val characterId = parseCharacterIdFromUrl(it).toInt()
+            addNewCharacterToTheList(it.toInt())
         }
     }
 
@@ -80,7 +81,7 @@ class CharactersListViewModel @AssistedInject constructor(
     }
 
 
-    fun getListOfEpisodesCharacterAppears(character: Character): MutableList<Episode> {
+    private fun getListOfEpisodesCharacterAppears(character: Character): MutableList<Episode> {
         val appearsInEpisodes: MutableList<Episode> = mutableListOf()
         character.episodeUrl?.forEach {
             val episodeId = parseEpisodeIdFromUrl(it).toInt()
@@ -92,9 +93,9 @@ class CharactersListViewModel @AssistedInject constructor(
         return appearsInEpisodes
     }
 
-    private fun getImageBitmap(character: Character): Bitmap? {
+    private fun getImageBitmap(imageUrl: String?): Bitmap? {
         return try {
-            val url = URL(character.image)
+            val url = URL(imageUrl)
             val connection = url.openConnection() as HttpURLConnection
             connection.doInput = true
             connection.connect()
