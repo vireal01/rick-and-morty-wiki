@@ -5,13 +5,6 @@ import androidx.room.Entity
 import androidx.room.Junction
 import androidx.room.Relation
 
-
-@Entity(primaryKeys = ["episodeId", "characterId"])
-data class EpisodeCharacterCrossRef(
-    val episodeId: Int,
-    val characterId: Int
-)
-
 data class EpisodeWithCharacters(
     @Embedded val episode: EpisodeEntity,
     @Relation(
@@ -30,4 +23,10 @@ data class CharacterWithEpisodes(
         associateBy = Junction(EpisodeCharacterCrossRef::class)
     )
     val episodes: List<EpisodeEntity>
+)
+
+@Entity(primaryKeys = ["episodeId", "characterId"])
+data class EpisodeCharacterCrossRef(
+    val episodeId: Int,
+    val characterId: Int
 )

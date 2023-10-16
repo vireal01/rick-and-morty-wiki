@@ -28,7 +28,6 @@ class EpisodesFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-//        viewModel.getAllEpisodesData()
 
         val rootView = inflater.inflate(R.layout.episodes_list_fragment, container, false)
 

@@ -6,15 +6,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.rickandmortywiki.R
+import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.network.models.Character
 
 class CharactersListAdapter(private val itemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<CharactersListAdapter.ViewHolder>() {
 
-    private val dataSet = mutableListOf<Character>()
+    private val dataSet = mutableListOf<CharacterEntity>()
 
-    fun setItems(newData: List<Character>) {
+    fun setItems(newData: List<CharacterEntity>) {
         dataSet.clear()
         dataSet.addAll(newData)
         notifyDataSetChanged()
@@ -50,11 +52,11 @@ class CharactersListAdapter(private val itemClickListener: OnItemClickListener) 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.characterNameTextView.text = dataSet[position].name
         viewHolder.characterStatusTextView.text = dataSet[position].status
-        viewHolder.characterImageView.setImageBitmap(dataSet[position].characterImageBitmap)
+        viewHolder.characterImageView.load(dataSet[position].imageUrl)
     }
 
     interface OnItemClickListener {
-        fun onItemClick(character: Character)
+        fun onItemClick(character: CharacterEntity)
     }
 
 

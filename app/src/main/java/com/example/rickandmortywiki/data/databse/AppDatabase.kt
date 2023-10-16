@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.rickandmortywiki.data.dao.CharacterDao
 import com.example.rickandmortywiki.data.dao.EpisodeDao
+import com.example.rickandmortywiki.data.dao.EpisodeWithCharacterDao
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
@@ -17,4 +18,5 @@ abstract class AppDatabase : RoomDatabase(), DatabaseApi
 interface DatabaseApi {
     fun characterDao(): CharacterDao
     fun episodeDao(): EpisodeDao
+    fun episodeWithCharacterDao(): EpisodeWithCharacterDao
 }

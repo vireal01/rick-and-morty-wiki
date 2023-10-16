@@ -5,4 +5,4 @@ import com.example.rickandmortywiki.navigation.AppBaseScreen
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class CharactersListScreen(val episode: EpisodeEntity) : AppBaseScreen
+class CharactersListScreen(val episodeId: Int) : AppBaseScreen

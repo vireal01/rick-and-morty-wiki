@@ -1,5 +1,6 @@
 package com.example.rickandmortywiki.ui.episodes
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortywiki.data.databse.DatabaseApi
@@ -39,16 +40,25 @@ class EpisodesViewModel @AssistedInject constructor(
     }
 
     fun onEpisodeClick(episode: EpisodeEntity) {
-        router.navigateTo(CharactersListScreen(episode))
+        router.navigateTo(CharactersListScreen(episode.episodeId))
     }
 
     private fun getAllEpisodesData() {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            val allEpisodes = apiService.getAllEpisodes()
+            var allEpisodes = apiService.getAllEpisodes()
             allEpisodes.results?.let {
                 db.episodeDao().insertAll(it.mapNotNull { episode ->
                     mapNetworkEpisodeToDataEpisodeEntity(episode)
                 })
+            }
+
+            while (allEpisodes.info?.next != null) {
+                allEpisodes = apiService.getEpisodesByUrl(allEpisodes.info?.next.toString())
+                allEpisodes.results?.let {
+                    db.episodeDao().insertAll(it.mapNotNull { episode ->
+                        mapNetworkEpisodeToDataEpisodeEntity(episode)
+                    })
+                }
             }
         }
     }

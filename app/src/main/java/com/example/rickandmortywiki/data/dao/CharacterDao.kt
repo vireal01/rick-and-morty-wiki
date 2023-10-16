@@ -5,8 +5,10 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.example.rickandmortywiki.data.entities.CharacterEntity
+import com.example.rickandmortywiki.data.entities.CharacterWithEpisodes
 
 @Dao
 interface CharacterDao {
@@ -25,9 +27,16 @@ interface CharacterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(characterEntities: List<CharacterEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertCharacter(characterEntity: CharacterEntity)
+
     @Delete
     fun delete(characterEntity: CharacterEntity)
 
     @Update
     fun updateUsers(vararg characterEntity: CharacterEntity)
+
+    @Transaction
+    @Query("SELECT * FROM characters")
+    fun getEpisodesWithCharacter(): List<CharacterWithEpisodes?>
 }
