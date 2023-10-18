@@ -35,6 +35,10 @@ class EpisodesFragment: Fragment() {
             override fun onItemClick(episode: EpisodeEntity) {
                 viewModel.onEpisodeClick(episode)
             }
+        }, object : EpisodesRecyclerViewAdapter.OnLoadMoreClickListener {
+            override fun onLoadMoreClick() {
+                viewModel.onLoadMoreBtnClicked()
+            }
         })
 
         rootView.findViewById<RecyclerView>(R.id.episodes_recycler_view).apply {

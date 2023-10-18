@@ -1,6 +1,5 @@
 package com.example.rickandmortywiki.ui.episodes
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortywiki.data.databse.DatabaseApi
@@ -27,13 +26,16 @@ class EpisodesViewModel @AssistedInject constructor(
 
     private val exceptionHandler = CoroutineExceptionHandler { _, e -> Timber.e(e) }
 
+    private var nextEpisodesPage: String? = null
+    private var defaultEpisodesLimit = 20
+
     private val _episodesList = MutableStateFlow<List<EpisodeEntity>>(mutableListOf())
     val episodesList: StateFlow<List<EpisodeEntity>> = _episodesList
 
     init {
-        getAllEpisodesData()
+        getFirstPAckOfEpisodes()
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            db.episodeDao().observeEpisodes().collectLatest {
+            db.episodeDao().observeEpisodes(defaultEpisodesLimit).collectLatest {
                 _episodesList.value = it
             }
         }
@@ -43,22 +45,43 @@ class EpisodesViewModel @AssistedInject constructor(
         router.navigateTo(CharactersListScreen(episode.episodeId))
     }
 
-    private fun getAllEpisodesData() {
+    private fun getFirstPAckOfEpisodes() {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            var allEpisodes = apiService.getAllEpisodes()
+            val allEpisodes = apiService.getAllEpisodes()
+//            Log.d("123", allEpisodes.info)
             allEpisodes.results?.let {
                 db.episodeDao().insertAll(it.mapNotNull { episode ->
                     mapNetworkEpisodeToDataEpisodeEntity(episode)
                 })
             }
+            nextEpisodesPage = allEpisodes.info?.next
 
-            while (allEpisodes.info?.next != null) {
-                allEpisodes = apiService.getEpisodesByUrl(allEpisodes.info?.next.toString())
-                allEpisodes.results?.let {
+
+//            while (allEpisodes.info?.next != null) {
+//                allEpisodes = apiService.getEpisodesByUrl(allEpisodes.info?.next.toString())
+//                allEpisodes.results?.let {
+//                    db.episodeDao().insertAll(it.mapNotNull { episode ->
+//                        mapNetworkEpisodeToDataEpisodeEntity(episode)
+//                    })
+//                }
+//            }
+        }
+    }
+
+    fun onLoadMoreBtnClicked() {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            val nextEpisodesPack = nextEpisodesPage?.let { apiService.getEpisodesByUrl(it) }
+            nextEpisodesPack?.results?.let {
                     db.episodeDao().insertAll(it.mapNotNull { episode ->
                         mapNetworkEpisodeToDataEpisodeEntity(episode)
                     })
                 }
+
+            nextEpisodesPage = nextEpisodesPack?.info?.next
+
+            defaultEpisodesLimit += nextEpisodesPack?.results?.size ?: 0
+            db.episodeDao().observeEpisodes(defaultEpisodesLimit).collectLatest {
+                _episodesList.value = it
             }
         }
     }

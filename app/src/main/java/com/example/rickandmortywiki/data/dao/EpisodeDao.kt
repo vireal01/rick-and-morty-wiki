@@ -5,9 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
-import com.example.rickandmortywiki.data.entities.EpisodeWithCharacters
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -33,6 +31,6 @@ interface EpisodeDao {
     @Delete
     fun delete(episodeEntity: EpisodeEntity)
 
-    @Query("SELECT * FROM episodes")
-    fun observeEpisodes():Flow<List<EpisodeEntity>>
+    @Query("SELECT * FROM episodes LIMIT (:limit)")
+    fun observeEpisodes(limit: Int):Flow<List<EpisodeEntity>>
 }
