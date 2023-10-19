@@ -1,35 +1,45 @@
 package com.example.rickandmortywiki.ui.episodes
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.VISIBLE
 import com.example.rickandmortywiki.R
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 
-class EpisodesRecyclerViewAdapter(private val itemClickListener: OnItemClickListener, private val loadMoreClickListener: OnLoadMoreClickListener) :
+class EpisodesRecyclerViewAdapter(
+    private val itemClickListener: OnItemClickListener,
+    private val loadMoreClickListener: OnLoadMoreClickListener,
+) :
     RecyclerView.Adapter<EpisodesRecyclerViewAdapter.ViewHolder>() {
 
     private val dataSet = mutableListOf<DataModel>()
+    private var nexEpisodesPageLink: String? = ""
 
     fun setItems(newData: List<EpisodeEntity>) {
         dataSet.clear()
-        dataSet.addAll(newData.map { episodeEntity ->  DataModel.Item(episodeEntity)})
+        dataSet.addAll(newData.map { episodeEntity -> DataModel.Item(episodeEntity) })
         dataSet.add(DataModel.Button("Load more!"))
         notifyDataSetChanged()
     }
+
+    fun changeNexEpisodesPageLinkVar(value: String?) {
+        nexEpisodesPageLink = value
+    }
+
+
 
     sealed class DataModel {
         data class Item(
             val episode: EpisodeEntity
         ) : DataModel()
+
         data class Button(
             val buttonTitle: String
-        ): DataModel()
+        ) : DataModel()
     }
 
     companion object {
@@ -37,21 +47,23 @@ class EpisodesRecyclerViewAdapter(private val itemClickListener: OnItemClickList
         private const val TYPE_BUTTON = 1
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener  {
-
-        init {
-            view.setOnClickListener(this)
-        }
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
         private fun bindItem(item: EpisodeEntity) {
             itemView.findViewById<TextView>(R.id.episodeNameTextView)?.text = item.name
             itemView.findViewById<TextView>(R.id.episodeNumberTextView)?.text = item.episode
+            itemView.setOnClickListener(this)
         }
+
         private fun bindButton(buttonTitle: String) {
-            val btn = itemView.findViewById<Button>(R.id.load_more_btn)
-            btn.visibility = VISIBLE
-            btn.text = buttonTitle
+            val loadMoreBtn = itemView.findViewById<Button>(R.id.load_more_btn)
+            loadMoreBtn.text = buttonTitle
+            if (nexEpisodesPageLink == null){
+                loadMoreBtn.visibility = GONE
+            }
+            loadMoreBtn.setOnClickListener(this)
         }
+
         fun bind(dataModel: DataModel) {
             when (dataModel) {
                 is DataModel.Button -> bindButton(dataModel.buttonTitle)
@@ -62,18 +74,16 @@ class EpisodesRecyclerViewAdapter(private val itemClickListener: OnItemClickList
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
-                Log.d("123", dataSet[position].toString())
                 when (dataSet[position]) {
                     is DataModel.Button -> {
                         loadMoreClickListener.onLoadMoreClick()
-                        Log.d("123", "Load more click from Adaoter")
                     }
+
                     is DataModel.Item -> {
                         val episode = dataSet[position] as DataModel.Item
                         itemClickListener.onItemClick(episode.episode)
                     }
                 }
-//                itemClickListener.onItemClick(dataSet[position])
             }
         }
     }

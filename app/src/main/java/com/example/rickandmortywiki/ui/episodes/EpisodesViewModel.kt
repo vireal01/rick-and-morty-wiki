@@ -26,7 +26,9 @@ class EpisodesViewModel @AssistedInject constructor(
 
     private val exceptionHandler = CoroutineExceptionHandler { _, e -> Timber.e(e) }
 
-    private var nextEpisodesPage: String? = null
+    private val _nextEpisodesPage = MutableStateFlow<String?>("")
+    val nextEpisodesPage: StateFlow<String?> = _nextEpisodesPage
+
     private var defaultEpisodesLimit = 20
 
     private val _episodesList = MutableStateFlow<List<EpisodeEntity>>(mutableListOf())
@@ -48,36 +50,25 @@ class EpisodesViewModel @AssistedInject constructor(
     private fun getFirstPAckOfEpisodes() {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             val allEpisodes = apiService.getAllEpisodes()
-//            Log.d("123", allEpisodes.info)
             allEpisodes.results?.let {
                 db.episodeDao().insertAll(it.mapNotNull { episode ->
                     mapNetworkEpisodeToDataEpisodeEntity(episode)
                 })
             }
-            nextEpisodesPage = allEpisodes.info?.next
-
-
-//            while (allEpisodes.info?.next != null) {
-//                allEpisodes = apiService.getEpisodesByUrl(allEpisodes.info?.next.toString())
-//                allEpisodes.results?.let {
-//                    db.episodeDao().insertAll(it.mapNotNull { episode ->
-//                        mapNetworkEpisodeToDataEpisodeEntity(episode)
-//                    })
-//                }
-//            }
+            _nextEpisodesPage.value = allEpisodes.info?.next
         }
     }
 
     fun onLoadMoreBtnClicked() {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            val nextEpisodesPack = nextEpisodesPage?.let { apiService.getEpisodesByUrl(it) }
+            val nextEpisodesPack = nextEpisodesPage.value?.let { apiService.getEpisodesByUrl(it) }
             nextEpisodesPack?.results?.let {
                     db.episodeDao().insertAll(it.mapNotNull { episode ->
                         mapNetworkEpisodeToDataEpisodeEntity(episode)
                     })
                 }
 
-            nextEpisodesPage = nextEpisodesPack?.info?.next
+            _nextEpisodesPage.value = nextEpisodesPack?.info?.next
 
             defaultEpisodesLimit += nextEpisodesPack?.results?.size ?: 0
             db.episodeDao().observeEpisodes(defaultEpisodesLimit).collectLatest {

@@ -16,7 +16,7 @@ import com.example.rickandmortywiki.di.AppComponent
 import com.example.rickandmortywiki.utils.KEY_SCREEN
 import com.example.rickandmortywiki.utils.daggerViewModel
 
-class EpisodesFragment: Fragment() {
+class EpisodesFragment : Fragment() {
 
     private val component by lazy { AppComponent.init(this) }
     private val viewModel by daggerViewModel { component.episodesViewModel().build() }
@@ -31,15 +31,16 @@ class EpisodesFragment: Fragment() {
 
         val rootView = inflater.inflate(R.layout.episodes_list_fragment, container, false)
 
-        val recyclerAdapter = EpisodesRecyclerViewAdapter(object : EpisodesRecyclerViewAdapter.OnItemClickListener {
-            override fun onItemClick(episode: EpisodeEntity) {
-                viewModel.onEpisodeClick(episode)
-            }
-        }, object : EpisodesRecyclerViewAdapter.OnLoadMoreClickListener {
-            override fun onLoadMoreClick() {
-                viewModel.onLoadMoreBtnClicked()
-            }
-        })
+        val recyclerAdapter =
+            EpisodesRecyclerViewAdapter(object : EpisodesRecyclerViewAdapter.OnItemClickListener {
+                override fun onItemClick(episode: EpisodeEntity) {
+                    viewModel.onEpisodeClick(episode)
+                }
+            }, object : EpisodesRecyclerViewAdapter.OnLoadMoreClickListener {
+                override fun onLoadMoreClick() {
+                    viewModel.onLoadMoreBtnClicked()
+                }
+            })
 
         rootView.findViewById<RecyclerView>(R.id.episodes_recycler_view).apply {
             layoutManager = LinearLayoutManager(context)
@@ -52,16 +53,14 @@ class EpisodesFragment: Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            viewModel.nextEpisodesPage.collect { value ->
+                recyclerAdapter.changeNexEpisodesPageLinkVar(value)
+            }
+        }
+
         return rootView
     }
-
-//    private fun navigateToFragment(fragmentRes: Int, episode: Episode) {
-//        val characterInfoFragment = CharactersListFragment()
-//        val transaction = requireActivity().supportFragmentManager.beginTransaction()
-//        transaction.replace(fragmentRes, characterInfoFragment)
-//        transaction.addToBackStack(null)
-//        transaction.commit()
-//    }
 
     companion object {
         fun newInstance(screen: EpisodesScreen): EpisodesFragment {
