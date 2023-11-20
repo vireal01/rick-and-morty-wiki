@@ -33,4 +33,10 @@ interface EpisodeDao {
 
     @Query("SELECT * FROM episodes LIMIT (:limit)")
     fun observeEpisodes(limit: Int):Flow<List<EpisodeEntity>>
+
+    @Query("SELECT COUNT(*) FROM episodes")
+    fun getNumberOfEpisodesInDataBase(): Int
+
+    @Query("SELECT episodeId FROM episodes;")
+    fun getListOfAllEpisodesInDataBase(): List<Int>
 }

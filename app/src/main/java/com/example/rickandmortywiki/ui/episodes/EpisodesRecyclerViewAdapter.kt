@@ -2,7 +2,7 @@ package com.example.rickandmortywiki.ui.episodes
 
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
@@ -17,7 +17,7 @@ class EpisodesRecyclerViewAdapter(
     RecyclerView.Adapter<EpisodesRecyclerViewAdapter.ViewHolder>() {
 
     private val dataSet = mutableListOf<DataModel>()
-    private var nexEpisodesPageLink: String? = ""
+    private var loadMoreBtnState: Int = VISIBLE
 
     fun setItems(newData: List<EpisodeEntity>) {
         dataSet.clear()
@@ -26,11 +26,9 @@ class EpisodesRecyclerViewAdapter(
         notifyDataSetChanged()
     }
 
-    fun changeNexEpisodesPageLinkVar(value: String?) {
-        nexEpisodesPageLink = value
+    fun getLoadMoreBtnState(value: Int?) {
+        loadMoreBtnState = value ?: VISIBLE
     }
-
-
 
     sealed class DataModel {
         data class Item(
@@ -58,9 +56,7 @@ class EpisodesRecyclerViewAdapter(
         private fun bindButton(buttonTitle: String) {
             val loadMoreBtn = itemView.findViewById<Button>(R.id.load_more_btn)
             loadMoreBtn.text = buttonTitle
-            if (nexEpisodesPageLink == null){
-                loadMoreBtn.visibility = GONE
-            }
+            loadMoreBtn.visibility = loadMoreBtnState
             loadMoreBtn.setOnClickListener(this)
         }
 

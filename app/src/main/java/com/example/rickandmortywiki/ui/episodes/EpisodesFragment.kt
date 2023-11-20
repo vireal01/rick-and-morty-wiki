@@ -54,8 +54,8 @@ class EpisodesFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            viewModel.nextEpisodesPage.collect { value ->
-                recyclerAdapter.changeNexEpisodesPageLinkVar(value)
+            viewModel.loadMoreBtnState.collect { value ->
+                recyclerAdapter.getLoadMoreBtnState(value)
             }
         }
 

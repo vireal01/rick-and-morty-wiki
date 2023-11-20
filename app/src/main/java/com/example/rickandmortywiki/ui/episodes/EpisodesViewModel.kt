@@ -1,5 +1,6 @@
 package com.example.rickandmortywiki.ui.episodes
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortywiki.data.databse.DatabaseApi
@@ -26,55 +27,91 @@ class EpisodesViewModel @AssistedInject constructor(
 
     private val exceptionHandler = CoroutineExceptionHandler { _, e -> Timber.e(e) }
 
-    private val _nextEpisodesPage = MutableStateFlow<String?>("")
-    val nextEpisodesPage: StateFlow<String?> = _nextEpisodesPage
+    private val _loadMoreBtnState = MutableStateFlow<Int?>(View.VISIBLE)
+    val loadMoreBtnState: StateFlow<Int?> = _loadMoreBtnState
 
-    private var defaultEpisodesLimit = 20
+    private var defaultEpisodesLimit = 2000
 
     private val _episodesList = MutableStateFlow<List<EpisodeEntity>>(mutableListOf())
     val episodesList: StateFlow<List<EpisodeEntity>> = _episodesList
 
+    private val _numberOfEpisodesFromApi: MutableStateFlow<Int?> = MutableStateFlow(0)
+    private val _numberOfEpisodesInPack: MutableStateFlow<Int?> = MutableStateFlow(0)
+
     init {
-        getFirstPAckOfEpisodes()
+        updateEpisodesDataInDB()
+        getFirstPackOfEpisodes()
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             db.episodeDao().observeEpisodes(defaultEpisodesLimit).collectLatest {
                 _episodesList.value = it
             }
+            updateLoadMoreBtnState()
         }
     }
 
-    fun onEpisodeClick(episode: EpisodeEntity) {
-        router.navigateTo(CharactersListScreen(episode.episodeId))
-    }
-
-    private fun getFirstPAckOfEpisodes() {
+    private fun getFirstPackOfEpisodes() {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             val allEpisodes = apiService.getAllEpisodes()
+            _numberOfEpisodesFromApi.value = allEpisodes.info?.count
+            _numberOfEpisodesInPack.value = allEpisodes.results?.size
             allEpisodes.results?.let {
                 db.episodeDao().insertAll(it.mapNotNull { episode ->
                     mapNetworkEpisodeToDataEpisodeEntity(episode)
                 })
             }
-            _nextEpisodesPage.value = allEpisodes.info?.next
         }
+
     }
 
-    fun onLoadMoreBtnClicked() {
+    private fun getElementsFromNextPage() {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            val nextEpisodesPack = nextEpisodesPage.value?.let { apiService.getEpisodesByUrl(it) }
-            nextEpisodesPack?.results?.let {
+            val episodesInDB = db.episodeDao().getNumberOfEpisodesInDataBase()
+            if (_numberOfEpisodesFromApi.value != null && episodesInDB < _numberOfEpisodesFromApi.value!!) {
+                val nextPack = episodesInDB / _numberOfEpisodesInPack.value!! + 1
+                val packOfEpisodes = apiService.getEpisodesPage(nextPack)
+                packOfEpisodes.results?.let {
                     db.episodeDao().insertAll(it.mapNotNull { episode ->
                         mapNetworkEpisodeToDataEpisodeEntity(episode)
                     })
                 }
 
-            _nextEpisodesPage.value = nextEpisodesPack?.info?.next
+                if (db.episodeDao().getNumberOfEpisodesInDataBase() >= (_numberOfEpisodesFromApi.value ?: 0)) {
+                    _loadMoreBtnState.value = View.GONE
+                }
+            }
 
-            defaultEpisodesLimit += nextEpisodesPack?.results?.size ?: 0
-            db.episodeDao().observeEpisodes(defaultEpisodesLimit).collectLatest {
-                _episodesList.value = it
+        }
+    }
+
+    private fun updateEpisodesDataInDB() {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            val episodesToUpdate = db.episodeDao().getListOfAllEpisodesInDataBase()
+            val episodes = apiService.getEpisodes(episodesToUpdate.joinToString(","))
+            episodes.let {
+                db.episodeDao().insertAll(it.mapNotNull { episode ->
+                    mapNetworkEpisodeToDataEpisodeEntity(episode)
+                })
+            }
+            updateLoadMoreBtnState()
+        }
+    }
+
+    private fun updateLoadMoreBtnState() {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            val numberOfEpisodesInDB = db.episodeDao().getNumberOfEpisodesInDataBase()
+            if (numberOfEpisodesInDB >= (_numberOfEpisodesFromApi.value ?: 0)) {
+                _loadMoreBtnState.value = View.GONE
             }
         }
+    }
+
+    fun onLoadMoreBtnClicked() {
+        getElementsFromNextPage()
+        updateLoadMoreBtnState()
+    }
+
+    fun onEpisodeClick(episode: EpisodeEntity) {
+        router.navigateTo(CharactersListScreen(episode.episodeId))
     }
 
     @AssistedFactory

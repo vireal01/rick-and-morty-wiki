@@ -26,4 +26,7 @@ interface Api {
 
     @GET("episode/{id}")
     suspend fun getEpisode(@Path("id") id: Int): Episode
+
+    @GET("episode/{ids}")
+    suspend fun getEpisodes(@Path("ids") ids: String): List<Episode>
 }

@@ -7,16 +7,17 @@ plugins {
 
 android {
     namespace 'com.example.rickandmortywiki'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.rickandmortywiki"
         minSdk 28
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
     }
 
     buildTypes {
@@ -31,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = '17'
+    }
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 }
 
@@ -52,6 +56,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation("androidx.room:room-runtime:2.5.2")
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestUtil 'androidx.test:orchestrator:1.4.2'
 //    annotationProcessor("androidx.room:room-compiler:2.5.2")
 
     // To use Kotlin annotation processing tool (kapt)

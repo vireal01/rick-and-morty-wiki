@@ -1,8 +1,6 @@
 package com.example.rickandmortywiki.network.models
 
-import android.graphics.Bitmap
 import android.os.Parcelable
-import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
@@ -30,11 +28,7 @@ data class Character(
     val location: Location? = null,
 
     @SerializedName("episode")
-    val episodeUrl: List<String>? = null,
-
-//    var appearsInEpisodes: MutableList<EpisodeEntity>? = null,
-
-//    var characterImageBitmap: Bitmap? = null,
+    val episodeUrl: List<String>? = null
 ) : Parcelable
 
 @Parcelize
