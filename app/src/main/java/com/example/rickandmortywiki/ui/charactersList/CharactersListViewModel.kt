@@ -3,7 +3,6 @@ package com.example.rickandmortywiki.ui.charactersList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortywiki.data.databse.DatabaseApi
-import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
 import com.example.rickandmortywiki.data.entities.EpisodeWithCharacters
 import com.example.rickandmortywiki.navigation.Router
@@ -47,6 +46,9 @@ class CharactersListViewModel @AssistedInject constructor(
                 val character = mapNetworkCharacterToDataCharacterEntity(it)
                 if (character != null) {
                     db.episodeWithCharacterDao().insert(EpisodeCharacterCrossRef(episodeId, character.characterId))
+                    character.episodes?.forEach{
+                        db.episodeWithCharacterDao().insert(EpisodeCharacterCrossRef(it.toInt(), character.characterId))
+                    }
                     db.characterDao().insertCharacter(character)
                 }
             }

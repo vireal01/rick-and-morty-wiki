@@ -31,6 +31,9 @@ data class AllEpisodes(
 
     @SerializedName("results")
     val results: List<Episode>? = null,
+
+    @SerializedName("error")
+    val error: String? = null,
 )
 
 data class EpisodesInfo(

@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmortywiki.R
-import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.di.AppComponent
 import com.example.rickandmortywiki.utils.KEY_SCREEN
 import com.example.rickandmortywiki.utils.daggerViewModel
@@ -32,15 +31,10 @@ class EpisodesFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.episodes_list_fragment, container, false)
 
         val recyclerAdapter =
-            EpisodesRecyclerViewAdapter(object : EpisodesRecyclerViewAdapter.OnItemClickListener {
-                override fun onItemClick(episode: EpisodeEntity) {
-                    viewModel.onEpisodeClick(episode)
-                }
-            }, object : EpisodesRecyclerViewAdapter.OnLoadMoreClickListener {
-                override fun onLoadMoreClick() {
-                    viewModel.onLoadMoreBtnClicked()
-                }
-            })
+            EpisodesRecyclerViewAdapter(
+                viewModel::onEpisodeClick,
+                viewModel::onLoadMoreBtnClicked
+            )
 
         rootView.findViewById<RecyclerView>(R.id.episodes_recycler_view).apply {
             layoutManager = LinearLayoutManager(context)
@@ -48,7 +42,7 @@ class EpisodesFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            viewModel.episodesList.collect { value ->
+            viewModel.episodesListForRecyclerView.collect {value ->
                 recyclerAdapter.setItems(value)
             }
         }

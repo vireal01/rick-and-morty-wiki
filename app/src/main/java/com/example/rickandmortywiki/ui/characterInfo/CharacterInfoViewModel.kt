@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.rickandmortywiki.data.databse.DatabaseApi
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.CharacterWithEpisodes
-import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
-import com.example.rickandmortywiki.data.entities.EpisodeWithCharacters
 import com.example.rickandmortywiki.navigation.Router
 import com.example.rickandmortywiki.network.api.Api
 import com.example.rickandmortywiki.ui.charactersList.CharactersListScreen
@@ -38,10 +36,6 @@ class CharacterInfoViewModel @AssistedInject constructor(
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             val characterEntity = db.characterDao().getCharacterById(characterId = characterId)
             _character.value = characterEntity
-
-            characterEntity?.episodes?.forEach {
-                db.episodeWithCharacterDao().insert(EpisodeCharacterCrossRef(it.toInt(), characterId))
-            }
 
             db.episodeWithCharacterDao().observerEpisodesOfCharacter(characterId)
                 .collect {

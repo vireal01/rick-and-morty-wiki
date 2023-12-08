@@ -27,10 +27,11 @@ interface AppComponent {
 		fun build(): AppComponent
 	}
 
-	//TODO: Make view models with Factories
 	fun episodesViewModel(): EpisodesViewModel.Factory
 	fun charactersListViewModel(): CharactersListViewModel.Factory
 	fun characterInfoViewModel(): CharacterInfoViewModel.Factory
+
+	// Add here dependencies for Android Worker
 
 	companion object {
 

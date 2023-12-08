@@ -32,7 +32,7 @@ interface EpisodeDao {
     fun delete(episodeEntity: EpisodeEntity)
 
     @Query("SELECT * FROM episodes LIMIT (:limit)")
-    fun observeEpisodes(limit: Int):Flow<List<EpisodeEntity>>
+    fun observeEpisodes(limit: Int = 1000):Flow<List<EpisodeEntity>>
 
     @Query("SELECT COUNT(*) FROM episodes")
     fun getNumberOfEpisodesInDataBase(): Int

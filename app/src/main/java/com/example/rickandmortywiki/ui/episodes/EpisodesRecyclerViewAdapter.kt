@@ -11,33 +11,23 @@ import com.example.rickandmortywiki.R
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 
 class EpisodesRecyclerViewAdapter(
-    private val itemClickListener: OnItemClickListener,
-    private val loadMoreClickListener: OnLoadMoreClickListener,
+    private val itemClick: (EpisodeEntity) -> Unit,
+    private val buttonClick: () -> Unit
 ) :
-    RecyclerView.Adapter<EpisodesRecyclerViewAdapter.ViewHolder>() {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val dataSet = mutableListOf<DataModel>()
-    private var loadMoreBtnState: Int = VISIBLE
+    private var dataSet = mutableListOf<RecyclerViewItemDataModel>()
+    var loadMoreBtnState: Int = VISIBLE
 
-    fun setItems(newData: List<EpisodeEntity>) {
+    fun setItems(newData: List<RecyclerViewItemDataModel>) { // should be newData: List<DataModel>
         dataSet.clear()
-        dataSet.addAll(newData.map { episodeEntity -> DataModel.Item(episodeEntity) })
-        dataSet.add(DataModel.Button("Load more!"))
+        dataSet.addAll(newData)
+        dataSet.add(RecyclerViewItemDataModel.Button("Load more!"))
         notifyDataSetChanged()
     }
 
-    fun getLoadMoreBtnState(value: Int?) {
-        loadMoreBtnState = value ?: VISIBLE
-    }
-
-    sealed class DataModel {
-        data class Item(
-            val episode: EpisodeEntity
-        ) : DataModel()
-
-        data class Button(
-            val buttonTitle: String
-        ) : DataModel()
+    fun getLoadMoreBtnState(value: Int) {
+        loadMoreBtnState = value
     }
 
     companion object {
@@ -45,77 +35,68 @@ class EpisodesRecyclerViewAdapter(
         private const val TYPE_BUTTON = 1
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
-
-        private fun bindItem(item: EpisodeEntity) {
-            itemView.findViewById<TextView>(R.id.episodeNameTextView)?.text = item.name
-            itemView.findViewById<TextView>(R.id.episodeNumberTextView)?.text = item.episode
+    inner class ButtonItem(itemView: View) : RecyclerView.ViewHolder(itemView),  View.OnClickListener  {
+        init {
             itemView.setOnClickListener(this)
         }
 
-        private fun bindButton(buttonTitle: String) {
+        fun bind(item: RecyclerViewItemDataModel.Button) {
             val loadMoreBtn = itemView.findViewById<Button>(R.id.load_more_btn)
-            loadMoreBtn.text = buttonTitle
+            loadMoreBtn.text = item.buttonTitle
             loadMoreBtn.visibility = loadMoreBtnState
             loadMoreBtn.setOnClickListener(this)
-        }
-
-        fun bind(dataModel: DataModel) {
-            when (dataModel) {
-                is DataModel.Button -> bindButton(dataModel.buttonTitle)
-                is DataModel.Item -> bindItem(dataModel.episode)
-            }
         }
 
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
-                when (dataSet[position]) {
-                    is DataModel.Button -> {
-                        loadMoreClickListener.onLoadMoreClick()
-                    }
-
-                    is DataModel.Item -> {
-                        val episode = dataSet[position] as DataModel.Item
-                        itemClickListener.onItemClick(episode.episode)
-                    }
-                }
+                buttonClick()
             }
         }
     }
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val layout = when (viewType) {
-            TYPE_ITEM -> R.layout.episode_item
-            TYPE_BUTTON -> R.layout.loader
-            else -> throw IllegalArgumentException("Invalid view type")
+    inner class EpisodeItem(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener  {
+        fun bind(item: RecyclerViewItemDataModel.Item) {
+            itemView.findViewById<TextView>(R.id.episodeNameTextView)?.text = item.episode.name
+            itemView.findViewById<TextView>(R.id.episodeNumberTextView)?.text = item.episode.episode
+            itemView.setOnClickListener(this)
+        }
+        override fun onClick(v: View?) {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                val element = dataSet[position] as RecyclerViewItemDataModel.Item
+                itemClick(element.episode)
+            }
         }
 
-        val view = LayoutInflater
-            .from(viewGroup.context)
-            .inflate(layout, viewGroup, false)
-
-        return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.bind(dataSet[position])
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(viewGroup.context)
+        return when (viewType) {
+            TYPE_ITEM -> EpisodeItem(inflater.inflate(R.layout.episode_item, viewGroup, false))
+            TYPE_BUTTON -> ButtonItem(inflater.inflate(R.layout.loader, viewGroup, false))
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
     }
 
-    interface OnItemClickListener {
-        fun onItemClick(episode: EpisodeEntity)
-    }
 
-    interface OnLoadMoreClickListener {
-        fun onLoadMoreClick()
-    }
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        // When viewHolder is
+//        viewHolder.bind(position)
+        // check AttachmentListAdapter for the reference
 
+        when (val item = dataSet[position]) {
+            is RecyclerViewItemDataModel.Item -> (holder as EpisodeItem).bind(item)
+            is RecyclerViewItemDataModel.Button -> (holder as ButtonItem).bind(item)
+        }
+    }
     override fun getItemCount() = dataSet.size
 
     override fun getItemViewType(position: Int): Int {
         return when (dataSet[position]) {
-            is DataModel.Item -> TYPE_ITEM
-            is DataModel.Button -> TYPE_BUTTON
+            is RecyclerViewItemDataModel.Item -> TYPE_ITEM
+            is RecyclerViewItemDataModel.Button -> TYPE_BUTTON
         }
     }
 }
