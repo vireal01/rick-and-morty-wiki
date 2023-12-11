@@ -15,4 +15,5 @@ data class EpisodeEntity(
     @ColumnInfo(name = "episode") val episode: String?,
     @ColumnInfo(name = "url") val url: String?,
     @ColumnInfo(name = "characters") val characters: List<String>?,
+    @ColumnInfo(name = "lastUpdate") val lastUpdate: Long
 ) : Parcelable

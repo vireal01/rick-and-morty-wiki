@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.rickandmortywiki.R
-import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.di.AppComponent
-import com.example.rickandmortywiki.ui.charactersList.CharactersListAdapter
 import com.example.rickandmortywiki.utils.KEY_SCREEN
 import com.example.rickandmortywiki.utils.daggerViewModel
 import com.example.rickandmortywiki.utils.getScreen
@@ -51,7 +49,6 @@ class CharactersInfoFragment: Fragment() {
                 view.findViewById<TextView>(R.id.characterInfoNameTextView).text = character?.name
                 view.findViewById<TextView>(R.id.characterInfoGenderTextView).text = character?.gender
                 view.findViewById<TextView>(R.id.characterInfoStatusTextView).text = character?.status
-//        view.findViewById<TextView>(R.id.characterInfoLocationTextView).text = character.location?.name
                 toolbar.title = character?.name
             }
         }

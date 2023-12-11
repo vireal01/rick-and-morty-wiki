@@ -39,4 +39,7 @@ interface EpisodeDao {
 
     @Query("SELECT episodeId FROM episodes;")
     fun getListOfAllEpisodesInDataBase(): List<Int>
+
+    @Query("SELECT episodeId FROM episodes WHERE lastUpdate - (:currentTime) > (:ttl)")
+    fun getEpisodesWithExpiredTTL(ttl: Long, currentTime: Long): List<Int>
 }

@@ -1,18 +1,15 @@
 package com.example.rickandmortywiki.ui.episodes
-
-import android.util.Log
 import android.view.View
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortywiki.data.databse.DatabaseApi
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.navigation.Router
 import com.example.rickandmortywiki.network.api.Api
+import com.example.rickandmortywiki.ui.BaseViewModel
 import com.example.rickandmortywiki.ui.charactersList.CharactersListScreen
 import com.example.rickandmortywiki.utils.mapNetworkEpisodeToDataEpisodeEntity
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,24 +20,15 @@ class EpisodesViewModel @AssistedInject constructor(
     private val router: Router,
     private val apiService: Api,
     private val db: DatabaseApi
-) : ViewModel() {
-
-    // TODO: make BaseViewModel open class and store exceptionHandler
-
-    @Suppress("LogNotTimber")
-    private val exceptionHandler =
-        CoroutineExceptionHandler { _, e ->
-            Log.e("Error!!", e.toString())
-        } // make it protected instead of private
+) : BaseViewModel() {
 
     private val _loadMoreBtnState = MutableStateFlow(View.VISIBLE)
     val loadMoreBtnState: StateFlow<Int> = _loadMoreBtnState
 
-    val _episodesListForRecyclerView =
+    private val _episodesListForRecyclerView =
         MutableStateFlow<List<RecyclerViewItemDataModel>>(mutableListOf())
     val episodesListForRecyclerView: StateFlow<List<RecyclerViewItemDataModel>> =
         _episodesListForRecyclerView
-
 
     init {
         updateEpisodesDataInDB()

@@ -1,32 +1,28 @@
 package com.example.rickandmortywiki.ui.charactersList
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortywiki.data.databse.DatabaseApi
 import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
 import com.example.rickandmortywiki.data.entities.EpisodeWithCharacters
 import com.example.rickandmortywiki.navigation.Router
 import com.example.rickandmortywiki.network.api.Api
+import com.example.rickandmortywiki.ui.BaseViewModel
 import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoScreen
 import com.example.rickandmortywiki.utils.mapNetworkCharacterToDataCharacterEntity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class CharactersListViewModel @AssistedInject constructor(
     private val router: Router,
     private val apiService: Api,
     private val db: DatabaseApi,
     @Assisted episodeId: Int
-) : ViewModel() {
-
-    private val exceptionHandler = CoroutineExceptionHandler { _, e -> Timber.e(e) }
+) : BaseViewModel() {
 
     private val _episodeWithCharacters = MutableStateFlow<EpisodeWithCharacters?>(null)
     val episodeWithCharacters: StateFlow<EpisodeWithCharacters?> = _episodeWithCharacters

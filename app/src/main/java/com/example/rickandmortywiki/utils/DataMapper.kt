@@ -1,6 +1,5 @@
 package com.example.rickandmortywiki.utils
 
-import android.util.Log
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.network.models.Character
@@ -13,20 +12,10 @@ fun mapNetworkEpisodeToDataEpisodeEntity(episode: Episode): EpisodeEntity? {
         name = episode.name,
         url = episode.url,
         episode = episode.episode,
-        characters = convertCharactersUrlToIds(episode.characters)
+        characters = convertCharactersUrlToIds(episode.characters),
+        lastUpdate = System.currentTimeMillis()
     )
 }
-
-//fun mapDataEpisodeEntityToNetworkEpisode(episode: EpisodeEntity): Episode? {
-//    return Episode(
-//        id = episode.episodeId,
-//        airDate = episode.airDate,
-//        name = episode.name,
-//        url = episode.url,
-//        episode = episode.episode,
-//        characters = convertCharactersUrlToIds(episode.characters)
-//    )
-//}
 
 fun convertCharactersUrlToIds(charactersList: List<String>?):List<String>? {
     return charactersList?.map { it.replace(
@@ -42,7 +31,6 @@ fun mapNetworkCharacterToDataCharacterEntity(character: Character): CharacterEnt
         species = character.species,
         gender = character.gender,
         imageUrl = character.image,
-//        location = character.location,
         episodes = convertEpisodeUrlToIds(character.episodeUrl)
     )
 }
