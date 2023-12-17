@@ -21,11 +21,13 @@ import com.example.rickandmortywiki.utils.KEY_SCREEN
 import com.example.rickandmortywiki.utils.daggerViewModel
 import com.example.rickandmortywiki.utils.getScreen
 
-class CharactersInfoFragment: Fragment() {
+class CharactersInfoFragment : Fragment() {
 
     private val screen: CharacterInfoScreen get() = getScreen()
     private val component by lazy { AppComponent.init(this) }
-    private val viewModel by daggerViewModel { component.characterInfoViewModel().build(screen.characterId) }
+    private val viewModel by daggerViewModel {
+        component.characterInfoViewModel().build(screen.characterId)
+    }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreateView(
@@ -47,24 +49,27 @@ class CharactersInfoFragment: Fragment() {
             viewModel.character.collect { character ->
                 view.findViewById<ImageView>(R.id.characterInfoImageView).load(character?.imageUrl)
                 view.findViewById<TextView>(R.id.characterInfoNameTextView).text = character?.name
-                view.findViewById<TextView>(R.id.characterInfoGenderTextView).text = character?.gender
-                view.findViewById<TextView>(R.id.characterInfoStatusTextView).text = character?.status
+                view.findViewById<TextView>(R.id.characterInfoGenderTextView).text =
+                    character?.gender
+                view.findViewById<TextView>(R.id.characterInfoStatusTextView).text =
+                    character?.status
                 toolbar.title = character?.name
             }
         }
 
-        val recyclerAdapter = CharacterInfoEpisodesListRecyclerViewAdapter(object : CharacterInfoEpisodesListRecyclerViewAdapter.OnItemClickListener {
-            override fun onItemClick(episode: EpisodeEntity) {
-                viewModel.onViewEpisodeItemClick(episode.episodeId)
-            }
-        })
+        val recyclerAdapter = CharacterInfoEpisodesListRecyclerViewAdapter(
+            object : CharacterInfoEpisodesListRecyclerViewAdapter.OnItemClickListener {
+                override fun onItemClick(episode: EpisodeEntity) {
+                    viewModel.onViewEpisodeItemClick(episode.episodeId)
+                }
+            })
 
         view.findViewById<RecyclerView>(R.id.character_info_recycler_view).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = recyclerAdapter
         }
 
-                viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             viewModel.appearsAtEpisodes.collect { episodes ->
                 val appearsInText = episodes?.episodes
                 if (appearsInText != null) {

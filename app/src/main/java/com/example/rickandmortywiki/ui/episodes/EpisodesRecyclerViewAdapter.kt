@@ -65,7 +65,8 @@ class EpisodesRecyclerViewAdapter(
         fun bind(item: RecyclerViewItemDataModel.Item) {
             itemView.findViewById<TextView>(R.id.episodeNameTextView)?.text = item.episode.name
             itemView.findViewById<TextView>(R.id.episodeNumberTextView)?.text = item.episode.episode
-            itemView.findViewById<TextView>(R.id.lastEpisodeUpdate)?.text = prettifyLastUpdateText(item.episode.lastUpdate)
+            itemView.findViewById<TextView>(R.id.lastEpisodeUpdate)?.text =
+                prettifyLastUpdateText(item.episode.lastUpdate)
             itemView.setOnClickListener(this)
         }
 
@@ -94,9 +95,6 @@ class EpisodesRecyclerViewAdapter(
 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        // When viewHolder is
-//        viewHolder.bind(position)
-        // check AttachmentListAdapter for the reference
 
         when (val item = dataSet[position]) {
             is RecyclerViewItemDataModel.Item -> (holder as EpisodeItem).bind(item)

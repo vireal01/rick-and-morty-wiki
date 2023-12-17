@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 
 const val KEY_SCREEN = "screen"
 
+@Suppress("UseCheckOrError")
 fun <T : Parcelable> Fragment.getScreen(): T = arguments?.getParcelable(KEY_SCREEN)
 	?: throw IllegalStateException("Screen arg wasn't passed")
 

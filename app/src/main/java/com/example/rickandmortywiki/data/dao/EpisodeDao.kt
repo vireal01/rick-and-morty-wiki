@@ -8,6 +8,7 @@ import androidx.room.Query
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import kotlinx.coroutines.flow.Flow
 
+@Suppress("TooManyFunctions")
 @Dao
 interface EpisodeDao {
     @Query("SELECT * FROM episodes")
