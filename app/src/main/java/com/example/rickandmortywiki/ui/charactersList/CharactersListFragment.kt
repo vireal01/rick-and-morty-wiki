@@ -2,7 +2,6 @@ package com.example.rickandmortywiki.ui.charactersList
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,11 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmortywiki.R
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.di.AppComponent
-import com.example.rickandmortywiki.network.models.Character
 import com.example.rickandmortywiki.utils.KEY_SCREEN
 import com.example.rickandmortywiki.utils.daggerViewModel
 import com.example.rickandmortywiki.utils.getScreen
-import kotlinx.coroutines.launch
 
 class CharactersListFragment: Fragment() {
 

@@ -1,6 +1,5 @@
 package com.example.rickandmortywiki.ui.characterInfo
 
-import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.navigation.AppBaseScreen
 import kotlinx.parcelize.Parcelize
 

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.rickandmortywiki.R
 import com.example.rickandmortywiki.data.entities.CharacterEntity
-import com.example.rickandmortywiki.network.models.Character
 
 class CharactersListAdapter(private val itemClickListener: OnItemClickListener) :
     RecyclerView.Adapter<CharactersListAdapter.ViewHolder>() {
