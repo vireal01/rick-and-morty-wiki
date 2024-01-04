@@ -1,0 +1,186 @@
+console-reports:
+  active: true
+  exclude:
+    - 'ProjectStatisticsReport'
+    - 'ComplexityReport'
+    - 'NotificationReport'
+    #  - 'FindingsReport'
+    - 'FileBasedFindingsReport'
+    - 'LiteFindingsReport'
+
+complexity:
+  active: true
+  ComplexCondition:
+    active: true
+    threshold: 4
+  LongParameterList:
+    active: true
+    functionThreshold: 10
+    constructorThreshold: 50
+    ignoreDefaultParameters: true
+  TooManyFunctions:
+    active: true
+    excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
+    thresholdInFiles: 22
+    thresholdInClasses: 20
+    thresholdInInterfaces: 14
+    thresholdInObjects: 11
+    thresholdInEnums: 11
+    ignoreDeprecated: false
+    ignorePrivate: true
+    ignoreOverridden: true
+
+  CyclomaticComplexMethod: #todo enable
+    active: false
+
+exceptions:
+  active: true
+  ThrowingExceptionFromFinally:
+    active: true
+  SwallowedException:
+    excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
+  TooGenericExceptionCaught:
+    active: false #todo: enable
+    excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
+    exceptionNames:
+      - ArrayIndexOutOfBoundsException
+      - Error
+      - Exception
+      - IllegalMonitorStateException
+      - NullPointerException
+      - IndexOutOfBoundsException
+      - RuntimeException
+      - Throwable
+    allowedExceptionNameRegex: "^(_|(ignore|expected).*)"
+
+formatting:
+  active: true
+  android: true
+  autoCorrect: true
+  AnnotationOnSeparateLine:
+    active: false
+    autoCorrect: true
+  CommentSpacing:
+    active: false
+    autoCorrect: true
+  ImportOrdering:
+    active: false
+    autoCorrect: true
+  Indentation:
+    active: false
+    autoCorrect: true
+    indentSize: 4
+    continuationIndentSize: 4
+  MaximumLineLength:
+    active: true
+    maxLineLength: 160
+  ModifierOrdering:
+    active: true
+    autoCorrect: true
+  MultiLineIfElse:
+    active: false
+
+  #todo: enable with auto correct
+  ArgumentListWrapping:
+    active: false
+  Wrapping:
+    active: false
+  PropertyWrapping:
+    active: false
+  CommentWrapping:
+    active: false
+  NoEmptyFirstLineInMethodBlock:
+    active: false
+  ModifierListSpacing:
+    active: false
+  AnnotationSpacing:
+    active: false
+  SpacingBetweenDeclarationsWithAnnotations:
+    active: false
+  UnnecessaryParenthesesBeforeTrailingLambda:
+    active: false
+  SpacingBetweenDeclarationsWithComments:
+    active: false
+  ParameterWrapping:
+    active: false
+  ParameterListWrapping:
+    active: false
+  SpacingAroundKeyword:
+    active: false
+
+
+  #todo: enable with auto correct? but what with snake case package naming?
+  PackageName:
+    active: false
+
+naming:
+  active: true
+  ConstructorParameterNaming:
+    privateParameterPattern: '[a-z_][A-Za-z0-9]*'
+  FunctionNaming:
+    ignoreAnnotated: ['Composable']
+  InvalidPackageDeclaration:
+    active: false
+    rootPackage: ''
+  MemberNameEqualsClassName:
+    active: false
+    ignoreOverridden: true
+  PackageNaming:
+    active: true
+    excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
+    packagePattern: '^[a-z]+(\.[a-z][A-Za-z0-9_]*)*$'
+
+performance:
+  active: true
+  SpreadOperator:
+    active: false
+    excludes: "**/test/**,**/androidTest/**,**/*.Test.kt,**/*.Spec.kt,**/*.Spek.kt"
+
+potential-bugs:
+  active: true
+  IteratorNotThrowingNoSuchElementException:
+    active: false #todo: enable
+  ImplicitDefaultLocale:
+    active: false
+
+style:
+  active: true
+  ForbiddenComment:
+    active: false
+    values: 'TODO:,FIXME:,STOPSHIP:'
+    allowedPatterns: ""
+  ForbiddenVoid:
+    active: false
+    ignoreOverridden: false
+    ignoreUsageInGenerics: false
+  LoopWithTooManyJumpStatements:
+    active: false #todo: enable
+    maxJumpCount: 1
+  MagicNumber:
+    ignoreEnums: true
+  MaxLineLength:
+    maxLineLength: 160
+  MayBeConst:
+    active: false
+  NestedClassesVisibility:
+    active: false
+  ProtectedMemberInFinalClass:
+    active: false
+  ReturnCount:
+    max: 3
+  SerialVersionUIDInSerializableClass:
+    active: false
+  UnusedPrivateMember:
+    active: true
+    allowedNames: "(_|ignored|expected|serialVersionUID)"
+    ignoreAnnotated: ['Composable']
+  UseRequire:
+    active: false
+  UseCheckOrError:
+    active: false
+  UselessCallOnNotNull:
+    active: false
+  UtilityClassWithPublicConstructor:
+    active: false
+  DestructuringDeclarationWithTooManyEntries:
+    maxDestructuringEntries: 4

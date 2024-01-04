@@ -21,7 +21,7 @@ class CharactersListAdapter(private val itemClickListener: OnItemClickListener) 
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener  {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         val characterNameTextView: TextView
         val characterStatusTextView: TextView
         val characterImageView: ImageView
@@ -57,7 +57,6 @@ class CharactersListAdapter(private val itemClickListener: OnItemClickListener) 
     interface OnItemClickListener {
         fun onItemClick(character: CharacterEntity)
     }
-
 
     override fun getItemCount() = dataSet.size
 }

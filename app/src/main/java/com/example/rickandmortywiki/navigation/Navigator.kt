@@ -1,6 +1,5 @@
 package com.example.rickandmortywiki.navigation
 
-import android.util.Log
 import androidx.fragment.app.FragmentManager
 import com.example.rickandmortywiki.R
 import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoScreen
@@ -9,7 +8,6 @@ import com.example.rickandmortywiki.ui.charactersList.CharactersListFragment
 import com.example.rickandmortywiki.ui.charactersList.CharactersListScreen
 import com.example.rickandmortywiki.ui.episodes.EpisodesFragment
 import com.example.rickandmortywiki.ui.episodes.EpisodesScreen
-
 
 class Navigator(private val fragmentManager: FragmentManager) {
 

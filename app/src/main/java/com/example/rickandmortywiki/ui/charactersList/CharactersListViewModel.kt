@@ -30,7 +30,7 @@ class CharactersListViewModel @AssistedInject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             db.episodeWithCharacterDao().observerCharactersFromEpisode(episodeId = episodeId)
-                .collect{
+                .collect {
                     _episodeWithCharacters.value = it
                 }
         }
@@ -42,7 +42,7 @@ class CharactersListViewModel @AssistedInject constructor(
                 val character = mapNetworkCharacterToDataCharacterEntity(it)
                 if (character != null) {
                     db.episodeWithCharacterDao().insert(EpisodeCharacterCrossRef(episodeId, character.characterId))
-                    character.episodes?.forEach{
+                    character.episodes?.forEach {
                         db.episodeWithCharacterDao().insert(EpisodeCharacterCrossRef(it.toInt(), character.characterId))
                     }
                     db.characterDao().insertCharacter(character)

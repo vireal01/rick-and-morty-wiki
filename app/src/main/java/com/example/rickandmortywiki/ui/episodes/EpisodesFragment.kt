@@ -42,7 +42,7 @@ class EpisodesFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            viewModel.episodesListForRecyclerView.collect {value ->
+            viewModel.episodesListForRecyclerView.collect { value ->
                 recyclerAdapter.setItems(value)
             }
         }
