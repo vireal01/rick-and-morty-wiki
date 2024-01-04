@@ -19,7 +19,7 @@ class CharacterInfoEpisodesListRecyclerViewAdapter(private val itemClickListener
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener  {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         val characterInfoEpisodeTagTextView: TextView
         val characterInfoEpisodeNameTextView: TextView
 
@@ -52,7 +52,6 @@ class CharacterInfoEpisodesListRecyclerViewAdapter(private val itemClickListener
     interface OnItemClickListener {
         fun onItemClick(episode: EpisodeEntity)
     }
-
 
     override fun getItemCount() = dataSet.size
 }

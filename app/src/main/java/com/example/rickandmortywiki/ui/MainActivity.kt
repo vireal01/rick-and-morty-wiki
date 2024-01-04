@@ -10,7 +10,7 @@ import com.example.rickandmortywiki.navigation.Navigator
 import com.example.rickandmortywiki.navigation.Router
 import com.example.rickandmortywiki.ui.episodes.EpisodesFragment
 
-class MainActivity: AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private val router by viewModels<Router>()
     private val navigator by lazy { Navigator(supportFragmentManager) }
 

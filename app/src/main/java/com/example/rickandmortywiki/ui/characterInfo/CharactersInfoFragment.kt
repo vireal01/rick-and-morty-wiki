@@ -39,7 +39,6 @@ class CharactersInfoFragment : Fragment() {
         return inflater.inflate(R.layout.character_info_fragment, container, false)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -77,7 +76,6 @@ class CharactersInfoFragment : Fragment() {
                 }
             }
         }
-
 
         toolbar.setNavigationOnClickListener {
             viewModel.onBackPressed()

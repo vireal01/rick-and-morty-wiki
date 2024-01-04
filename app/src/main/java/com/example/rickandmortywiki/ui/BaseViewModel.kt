@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 
-open class BaseViewModel: AndroidViewModel(application = Application()) {
+open class BaseViewModel : AndroidViewModel(application = Application()) {
     @SuppressLint("LogNotTimber")
     protected val exceptionHandler =
         CoroutineExceptionHandler { _, e ->

@@ -17,7 +17,7 @@ fun mapNetworkEpisodeToDataEpisodeEntity(episode: Episode): EpisodeEntity? {
     )
 }
 
-fun convertCharactersUrlToIds(charactersList: List<String>?):List<String>? {
+fun convertCharactersUrlToIds(charactersList: List<String>?): List<String>? {
     return charactersList?.map { it.replace(
         "https://rickandmortyapi.com/api/character/", "")
     }
@@ -35,7 +35,7 @@ fun mapNetworkCharacterToDataCharacterEntity(character: Character): CharacterEnt
     )
 }
 
-fun convertEpisodeUrlToIds(charactersList: List<String>?):List<String>? {
+fun convertEpisodeUrlToIds(charactersList: List<String>?): List<String>? {
     return charactersList?.map { it.replace(
         "https://rickandmortyapi.com/api/episode/", "")
     }

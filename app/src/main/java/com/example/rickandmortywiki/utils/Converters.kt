@@ -10,6 +10,6 @@ class Converters {
 
     @TypeConverter
     fun fromListToString(listOfStrings: List<String>): String {
-        return  listOfStrings.joinToString(",")
+        return listOfStrings.joinToString(",")
     }
 }
