@@ -25,18 +25,15 @@ class EpisodesViewModel @AssistedInject constructor(
     private val _loadMoreBtnState = MutableStateFlow(View.VISIBLE)
     val loadMoreBtnState: StateFlow<Int> = _loadMoreBtnState
 
-    private val _episodesListForRecyclerView =
-        MutableStateFlow<List<RecyclerViewItemDataModel>>(mutableListOf())
-    val episodesListForRecyclerView: StateFlow<List<RecyclerViewItemDataModel>> =
-        _episodesListForRecyclerView
+    private val _episodesList = MutableStateFlow<List<EpisodeEntity>>(mutableListOf())
+    val episodesList: StateFlow<List<EpisodeEntity>> = _episodesList
 
     init {
         updateEpisodesDataInDB()
         onLoadMoreBtnClicked()
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             db.episodeDao().observeEpisodes().collectLatest {
-                _episodesListForRecyclerView.value =
-                    it.map { episodeEntity -> RecyclerViewItemDataModel.Item(episodeEntity) }
+                _episodesList.value = it
             }
         }
     }

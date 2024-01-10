@@ -5,16 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.example.rickandmortywiki.di.AppComponent
-import com.example.rickandmortywiki.ui.charactersList.components.CharactersListItem
+import com.example.rickandmortywiki.ui.theme.RickAndMortyTheme
 import com.example.rickandmortywiki.utils.KEY_SCREEN
 import com.example.rickandmortywiki.utils.daggerViewModel
 import com.example.rickandmortywiki.utils.getScreen
@@ -35,57 +31,16 @@ class CharactersListFragment : Fragment() {
     ): View {
 
         super.onCreateView(inflater, container, savedInstanceState)
-//        return inflater.inflate(R.layout.character_info_fragment, container, false)
 
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MaterialTheme {
-                    val episodeWithCharacters =
-                        viewModel.episodeWithCharacters.collectAsState().value?.characters
-                    if (episodeWithCharacters != null) {
-                        LazyColumn {
-                            items(episodeWithCharacters) { item ->
-                                CharactersListItem(
-                                    item
-                                ) { viewModel.onViewCharacterItemClick(item.characterId) }
-                            }
-                        }
-                    }
+                RickAndMortyTheme {
+                    CharactersListRenderer(viewModel)
                 }
             }
         }
     }
-//
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//
-//        val recyclerAdapter =
-//            CharactersListAdapter(object : CharactersListAdapter.OnItemClickListener {
-//                override fun onItemClick(character: CharacterEntity) {
-//                    viewModel.onViewCharacterItemClick(character.characterId)
-//                }
-//            })
-//
-//        view.findViewById<RecyclerView>(R.id.characters_recycler_view).apply {
-//            layoutManager = LinearLayoutManager(context)
-//            adapter = recyclerAdapter
-//        }
-//
-//        val toolbar = view.findViewById<Toolbar>(R.id.charactersListToolbar)
-//
-//        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-//            viewModel.episodeWithCharacters.collect { value ->
-//                recyclerAdapter.setItems(value?.characters ?: emptyList())
-//                toolbar.title = value?.episode?.name ?: ""
-//            }
-//        }
-//
-//        toolbar.setNavigationOnClickListener {
-//            viewModel.onBackPressed()
-//        }
-//
-//    }
 
     companion object {
         fun newInstance(screen: CharactersListScreen): CharactersListFragment {

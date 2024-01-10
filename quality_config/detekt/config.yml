@@ -158,6 +158,7 @@ style:
     maxJumpCount: 1
   MagicNumber:
     ignoreEnums: true
+    excludes: ['**/Color.kt']
   MaxLineLength:
     maxLineLength: 160
   MayBeConst:
