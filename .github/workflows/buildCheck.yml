@@ -2,7 +2,8 @@ name: Build check
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - '*'
   pull_request:
     branches: 
       - '*'
@@ -39,5 +40,5 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build with Gradle
+      - name: Run detekt job
         run: ./gradlew detekt
