@@ -1,7 +1,9 @@
 package com.example.rickandmortywiki.ui.characterInfo
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,9 +20,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.rickandmortywiki.R
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.components.AsyncImageWithRainbowCircle
@@ -113,5 +125,32 @@ fun CharacterInfoCard(character: CharacterEntity) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CharacterInfoCardPreviewByLongTap(character: CharacterEntity, onClose: () -> Unit) {
+    val strClose = "Close"
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.pointerInput(onClose) { detectTapGestures { onClose() } }
+            .semantics(mergeDescendants = true) {
+                contentDescription = strClose
+                onClick {
+                    onClose()
+                    true
+                }
+            }
+            .onKeyEvent {
+                if (it.key == Key.Escape) {
+                    onClose()
+                    true
+                } else {
+                    false
+                }
+            }
+            .background(Color.DarkGray.copy(alpha = 0.75f))
+    ) {
+        CharacterInfoCard(character = character)
     }
 }

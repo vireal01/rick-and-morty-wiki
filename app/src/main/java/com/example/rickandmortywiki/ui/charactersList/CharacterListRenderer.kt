@@ -1,8 +1,9 @@
 package com.example.rickandmortywiki.ui.charactersList
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,15 +21,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
+import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoCardPreviewByLongTap
 import com.example.rickandmortywiki.ui.components.AsyncImageWithRainbowCircle
 import com.example.rickandmortywiki.ui.components.RickAndMortyTopAppBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CharactersListRenderer(viewModel: CharactersListViewModel) {
+
     val episodeWithCharacters =
         viewModel.episodeWithCharacters.collectAsState().value?.characters
     if (episodeWithCharacters != null) {
@@ -49,16 +54,31 @@ fun CharactersListRenderer(viewModel: CharactersListViewModel) {
             ) {
                 items(episodeWithCharacters) { item ->
                     CharactersListItem(
-                        item
+                        item,
+                        viewModel
                     ) { viewModel.onViewCharacterItemClick(item.characterId) }
                 }
             }
         }
+
+        if (viewModel.activeItem.value != null) {
+            CharacterInfoCardPreviewByLongTap(
+                character = viewModel.activeItem.value!!,
+                onClose = { viewModel.activeItem.value = null }
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CharactersListItem(character: CharacterEntity, onClick: () -> Unit) {
+fun CharactersListItem(
+    character: CharacterEntity,
+    viewModel: CharactersListViewModel,
+    onClick: () -> Unit
+) {
+
+    val haptics = LocalHapticFeedback.current
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = MaterialTheme.shapes.medium,
@@ -67,9 +87,13 @@ fun CharactersListItem(character: CharacterEntity, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
-                    onClick()
-                }
+                .combinedClickable(
+                    onClick = { onClick() },
+                    onLongClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                        viewModel.activeItem.value = character
+                    },
+                )
                 .padding(vertical = Paddings.half, horizontal = Paddings.one)
             // Paddings may be only /4 or /8. Side paddings 16.dp (from Material design)
         ) {
