@@ -32,7 +32,6 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.rickandmortywiki.R
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.components.AsyncImageWithRainbowCircle
