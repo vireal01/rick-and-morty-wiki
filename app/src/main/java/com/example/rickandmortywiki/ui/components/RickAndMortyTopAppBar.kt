@@ -13,6 +13,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.rickandmortywiki.ui.Paddings
@@ -33,7 +35,8 @@ fun RickAndMortyTopAppBar(
                 text = text,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = Paddings.one),
+                    .padding(start = Paddings.one)
+                    .semantics { this.contentDescription = RickAndMortyTopAppBarTags.TopAppBarTitle },
                 textAlign = TextAlign.Left,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -53,4 +56,8 @@ fun RickAndMortyTopAppBar(
             }
         },
     )
+}
+
+object RickAndMortyTopAppBarTags {
+    const val TopAppBarTitle = "TopAppBarTitle"
 }

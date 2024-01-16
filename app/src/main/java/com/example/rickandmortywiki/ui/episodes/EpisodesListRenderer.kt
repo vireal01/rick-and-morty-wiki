@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,6 +24,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -77,6 +78,7 @@ fun EpisodesListItem(episode: EpisodeEntity, onClick: () -> Unit) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.semantics { this.contentDescription = EpisodesListTags.episodeContainer },
     ) {
         Column(
             modifier = Modifier
@@ -89,7 +91,8 @@ fun EpisodesListItem(episode: EpisodeEntity, onClick: () -> Unit) {
             Text(
                 text = episode.name.toString(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.semantics { contentDescription = EpisodesListTags.episodeTitle },
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -99,8 +102,8 @@ fun EpisodesListItem(episode: EpisodeEntity, onClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Left,
-                    modifier = Modifier.paddingFromBaseline(bottom = 0.dp)
-                )
+                    modifier = Modifier.semantics { contentDescription = EpisodesListTags.episodeTag },
+                    )
                 Spacer(modifier = Modifier.width(Paddings.one))
                 Text(
                     text = prettifyLastUpdateText(episode.lastUpdate),
@@ -116,4 +119,10 @@ fun EpisodesListItem(episode: EpisodeEntity, onClick: () -> Unit) {
 private fun prettifyLastUpdateText(timestamp: Long?): String {
     val simpleDateFormat = SimpleDateFormat("dd MMM, HH:mm:ss", Locale.ENGLISH)
     return "upd: " + simpleDateFormat.format(timestamp)
+}
+
+object EpisodesListTags {
+    val episodeTitle = "episode_list_episode_title"
+    val episodeTag = "episode_list_episode_tag"
+    val episodeContainer = "episode_list_episode_container"
 }
