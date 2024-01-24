@@ -1,19 +1,26 @@
 package com.example.rickandmortywiki.di
 
 import android.app.Application
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import com.example.rickandmortywiki.data.databse.AppDatabase
 import com.example.rickandmortywiki.data.databse.DatabaseApi
 import com.example.rickandmortywiki.network.CurlInterceptorWrapper
 import com.example.rickandmortywiki.network.api.Api
+import com.example.rickandmortywiki.ui.episodes.EpisodesViewModel
+import com.example.rickandmortywiki.ui.episodes.EpisodesViewModel_Factory
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class AppModule {
     @Singleton
     @Provides

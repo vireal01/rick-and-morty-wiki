@@ -1,30 +1,46 @@
 package com.example.rickandmortywiki.ui.charactersList
 
+import android.annotation.SuppressLint
+import android.os.Bundle
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.savedstate.SavedStateRegistryOwner
 import com.example.rickandmortywiki.data.databse.DatabaseApi
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
 import com.example.rickandmortywiki.data.entities.EpisodeWithCharacters
-import com.example.rickandmortywiki.navigation.Router
+//import com.example.rickandmortywiki.navigation.Router
 import com.example.rickandmortywiki.network.api.Api
-import com.example.rickandmortywiki.ui.BaseViewModel
-import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoScreen
+import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoViewModel
 import com.example.rickandmortywiki.utils.mapNetworkCharacterToDataCharacterEntity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@HiltViewModel(assistedFactory = CharactersListViewModel.CharactersListViewModelFactory::class)
 class CharactersListViewModel @AssistedInject constructor(
-    private val router: Router,
     private val apiService: Api,
     private val db: DatabaseApi,
     @Assisted episodeId: Int
-) : BaseViewModel() {
+) : ViewModel() {
+
+    @SuppressLint("LogNotTimber")
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, e ->
+            Log.e("Error!!", e.toString())
+        }
 
     private val _episodeWithCharacters = MutableStateFlow<EpisodeWithCharacters?>(null)
     val episodeWithCharacters: StateFlow<EpisodeWithCharacters?> = _episodeWithCharacters
@@ -40,13 +56,16 @@ class CharactersListViewModel @AssistedInject constructor(
 
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             val charactersIds = db.episodeDao().getEpisodeCharactersIds(episodeId)
-            val listOfNetworkCharacters = apiService.getMultipleCharacters(charactersIds.joinToString(","))
+            val listOfNetworkCharacters =
+                apiService.getMultipleCharacters(charactersIds.joinToString(","))
             listOfNetworkCharacters.forEach {
                 val character = mapNetworkCharacterToDataCharacterEntity(it)
                 if (character != null) {
-                    db.episodeWithCharacterDao().insert(EpisodeCharacterCrossRef(episodeId, character.characterId))
+                    db.episodeWithCharacterDao()
+                        .insert(EpisodeCharacterCrossRef(episodeId, character.characterId))
                     character.episodes?.forEach {
-                        db.episodeWithCharacterDao().insert(EpisodeCharacterCrossRef(it.toInt(), character.characterId))
+                        db.episodeWithCharacterDao()
+                            .insert(EpisodeCharacterCrossRef(it.toInt(), character.characterId))
                     }
                     db.characterDao().insertCharacter(character)
                 }
@@ -54,16 +73,8 @@ class CharactersListViewModel @AssistedInject constructor(
         }
     }
 
-    fun onViewCharacterItemClick(characterId: Int) {
-        router.navigateTo(CharacterInfoScreen(characterId))
-    }
-
-    fun onBackPressed() {
-        router.closeScreen()
-    }
-
     @AssistedFactory
-    interface Factory {
+    interface CharactersListViewModelFactory {
         fun build(episodeId: Int): CharactersListViewModel
     }
 }

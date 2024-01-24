@@ -1,6 +1,7 @@
 package com.example.rickandmortywiki.ui.episodes
 
 import android.view.View
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.rickandmortywiki.R
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.ui.Paddings
@@ -37,9 +39,16 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun EpisodesListRenderer(viewModel: EpisodesViewModel) {
+fun EpisodesListRenderer(
+    onEpisodeClick: (EpisodeEntity) -> Unit = {},
+    viewModel: EpisodesViewModel = hiltViewModel(),
+    ) {
+//    val component by lazy { AppComponent.init() }
+//    val viewModel = daggerViewModel { component.episodesViewModel().build() }
     val episodes = viewModel.episodesList.collectAsState().value
     val loadModeBtnState = viewModel.loadMoreBtnState.collectAsState().value
+
+//    private val router by viewModels<Router>()
 
     Scaffold(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -58,7 +67,9 @@ fun EpisodesListRenderer(viewModel: EpisodesViewModel) {
             items(episodes) { item ->
                 EpisodesListItem(
                     item
-                ) { viewModel.onEpisodeClick(item) }
+                ) { onEpisodeClick(item)
+//                    viewModel.onEpisodeClick(item)
+                }
             }
             if (loadModeBtnState == View.VISIBLE) {
                 item {

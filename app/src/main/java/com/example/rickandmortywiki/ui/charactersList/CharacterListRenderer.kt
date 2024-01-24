@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoCardPreviewByLongTap
@@ -32,7 +33,16 @@ import com.example.rickandmortywiki.ui.components.RickAndMortyTopAppBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CharactersListRenderer(viewModel: CharactersListViewModel) {
+fun CharactersListRenderer(
+    onBackClick: () -> Unit,
+    onCharacterClick : (CharacterEntity) -> Unit,
+    episodeId: Int,
+    viewModel: CharactersListViewModel = hiltViewModel(
+        creationCallback = { factory: CharactersListViewModel.CharactersListViewModelFactory ->
+            factory.build(episodeId)
+        }),
+) {
+
 
     val episodeWithCharacters =
         viewModel.episodeWithCharacters.collectAsState().value?.characters
@@ -43,7 +53,7 @@ fun CharactersListRenderer(viewModel: CharactersListViewModel) {
                 RickAndMortyTopAppBar(
                     text = viewModel.episodeWithCharacters.collectAsState().value?.episode?.name.toString(),
                 ) {
-                    viewModel.onBackPressed()
+                    onBackClick()
                 }
             },
         ) { innerPadding ->
@@ -54,9 +64,9 @@ fun CharactersListRenderer(viewModel: CharactersListViewModel) {
             ) {
                 items(episodeWithCharacters) { item ->
                     CharactersListItem(
-                        item,
-                        viewModel
-                    ) { viewModel.onViewCharacterItemClick(item.characterId) }
+                        character = item,
+                        viewModel = viewModel
+                    ) { onCharacterClick(item) }
                 }
             }
         }

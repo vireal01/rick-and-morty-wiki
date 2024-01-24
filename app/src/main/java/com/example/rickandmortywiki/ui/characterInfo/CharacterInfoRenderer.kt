@@ -32,13 +32,22 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
+import com.example.rickandmortywiki.ui.charactersList.CharactersListViewModel
 import com.example.rickandmortywiki.ui.components.AsyncImageWithRainbowCircle
 import com.example.rickandmortywiki.ui.components.RickAndMortyTopAppBar
 
 @Composable
-fun CharacterInfoRenderer(viewModel: CharacterInfoViewModel) {
+fun CharacterInfoRenderer(
+    characterId: Int,
+    viewModel: CharacterInfoViewModel = hiltViewModel(
+        creationCallback = { factory: CharacterInfoViewModel.CharacterInfoViewModelFactory ->
+            factory.build(characterId)
+        }),
+    onBackClick: () -> Unit,
+    ) {
     val character = viewModel.character.collectAsState().value
 
     Scaffold(
@@ -47,7 +56,7 @@ fun CharacterInfoRenderer(viewModel: CharacterInfoViewModel) {
             RickAndMortyTopAppBar(
                 text = character?.name.toString(),
             ) {
-                viewModel.onBackPressed()
+                onBackClick()
             }
         }
     ) { innerPadding ->
@@ -132,7 +141,8 @@ fun CharacterInfoCardPreviewByLongTap(character: CharacterEntity, onClose: () ->
     val strClose = "Close"
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.pointerInput(onClose) { detectTapGestures { onClose() } }
+        modifier = Modifier
+            .pointerInput(onClose) { detectTapGestures { onClose() } }
             .semantics(mergeDescendants = true) {
                 contentDescription = strClose
                 onClick {
