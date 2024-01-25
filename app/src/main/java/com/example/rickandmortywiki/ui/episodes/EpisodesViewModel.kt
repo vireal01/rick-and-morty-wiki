@@ -4,7 +4,7 @@ import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rickandmortywiki.data.databse.DatabaseApi
+import com.example.rickandmortywiki.data.databse.AppDatabase
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.network.api.Api
 import com.example.rickandmortywiki.utils.mapNetworkEpisodeToDataEpisodeEntity
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EpisodesViewModel @Inject constructor(
     private val apiService: Api,
-    private val db: DatabaseApi
+    private val db: AppDatabase
 ) : ViewModel() {
 
     @SuppressLint("LogNotTimber")

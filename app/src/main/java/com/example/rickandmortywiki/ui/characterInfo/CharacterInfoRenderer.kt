@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,7 +20,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.components.AsyncImageWithRainbowCircle
@@ -46,14 +47,14 @@ fun CharacterInfoRenderer(
             factory.build(characterId)
         }),
     onBackClick: () -> Unit,
-    ) {
-    val character = viewModel.character.collectAsState().value
+) {
+    val character = viewModel.character.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
         topBar = {
             RickAndMortyTopAppBar(
-                text = character?.name.toString(),
+                text = character.value?.name.toString(),
             ) {
                 onBackClick()
             }
@@ -62,8 +63,9 @@ fun CharacterInfoRenderer(
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-            if (character != null) {
-                CharacterInfoCard(character)
+            character.value?.let {
+                safeValue ->
+                CharacterInfoCard(safeValue)
             }
         }
     }
@@ -103,16 +105,20 @@ fun CharacterInfoCard(character: CharacterEntity) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
-                        )
+                    )
                     Text(
                         text = "Status: ${character.status}",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "Gender: ${character.gender}",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -126,7 +132,9 @@ fun CharacterInfoCard(character: CharacterEntity) {
             )
             if (character.appearsInEpisodes != null) {
                 LazyColumn {
-                    items(character.appearsInEpisodes!!) { episode ->
+                    items(
+                        character.appearsInEpisodes!!,
+                        key = { episode -> episode.episodeId }) { episode ->
                         Text(text = episode.name.toString())
                     }
                 }
@@ -137,13 +145,13 @@ fun CharacterInfoCard(character: CharacterEntity) {
 
 @Composable
 fun CharacterInfoCardPreviewByLongTap(character: CharacterEntity, onClose: () -> Unit) {
-    val strClose = "Close"
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .fillMaxSize()
             .pointerInput(onClose) { detectTapGestures { onClose() } }
             .semantics(mergeDescendants = true) {
-                contentDescription = strClose
+                contentDescription = "Close"
                 onClick {
                     onClose()
                     true

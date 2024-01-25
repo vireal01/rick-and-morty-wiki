@@ -3,7 +3,6 @@ package com.example.rickandmortywiki.di
 import android.app.Application
 import androidx.room.Room
 import com.example.rickandmortywiki.data.databse.AppDatabase
-import com.example.rickandmortywiki.data.databse.DatabaseApi
 import com.example.rickandmortywiki.network.CurlInterceptorWrapper
 import com.example.rickandmortywiki.network.api.Api
 import dagger.Module
@@ -26,7 +25,7 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun db(context: Application): DatabaseApi = Room.databaseBuilder(
+    fun db(context: Application): AppDatabase = Room.databaseBuilder(
         context.applicationContext,
         AppDatabase::class.java,
         "rick_and_morty_database"

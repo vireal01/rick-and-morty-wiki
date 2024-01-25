@@ -28,20 +28,20 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.rickandmortywiki.R
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.components.RickAndMortyTopAppBar
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.rickandmortywiki.utils.prettifyLastUpdateText
 
 @Composable
 fun EpisodesListRenderer(
     onEpisodeClick: (EpisodeEntity) -> Unit = {},
     viewModel: EpisodesViewModel = hiltViewModel(),
-    ) {
+) {
     val episodes = viewModel.episodesList.collectAsState().value
     val loadModeBtnState = viewModel.loadMoreBtnState.collectAsState().value
 
@@ -59,10 +59,11 @@ fun EpisodesListRenderer(
             modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(episodes) { item ->
+            items(episodes, key = { episode -> episode.episodeId }) { episode ->
                 EpisodesListItem(
-                    item
-                ) { onEpisodeClick(item)
+                    episode
+                ) {
+                    onEpisodeClick(episode)
                 }
             }
             if (loadModeBtnState == View.VISIBLE) {
@@ -83,7 +84,9 @@ fun EpisodesListItem(episode: EpisodeEntity, onClick: () -> Unit) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.semantics { this.contentDescription = EpisodesListTags.episodeContainer },
+        modifier = Modifier.semantics {
+            this.contentDescription = EpisodesListTags.episodeContainer
+        },
     ) {
         Column(
             modifier = Modifier
@@ -97,7 +100,11 @@ fun EpisodesListItem(episode: EpisodeEntity, onClick: () -> Unit) {
                 text = episode.name.toString(),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.semantics { contentDescription = EpisodesListTags.episodeTitle },
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.semantics {
+                    contentDescription = EpisodesListTags.episodeTitle
+                },
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -107,23 +114,24 @@ fun EpisodesListItem(episode: EpisodeEntity, onClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Left,
-                    modifier = Modifier.semantics { contentDescription = EpisodesListTags.episodeTag },
-                    )
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.semantics {
+                        contentDescription = EpisodesListTags.episodeTag
+                    },
+                )
                 Spacer(modifier = Modifier.width(Paddings.one))
                 Text(
                     text = prettifyLastUpdateText(episode.lastUpdate),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.ExtraLight
+                    fontWeight = FontWeight.ExtraLight,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
     }
-}
-
-private fun prettifyLastUpdateText(timestamp: Long?): String {
-    val simpleDateFormat = SimpleDateFormat("dd MMM, HH:mm:ss", Locale.ENGLISH)
-    return "upd: " + simpleDateFormat.format(timestamp)
 }
 
 object EpisodesListTags {

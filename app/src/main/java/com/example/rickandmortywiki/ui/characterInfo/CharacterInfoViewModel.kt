@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rickandmortywiki.data.databse.DatabaseApi
+import com.example.rickandmortywiki.data.databse.AppDatabase
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.CharacterWithEpisodes
 import dagger.assisted.Assisted
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = CharacterInfoViewModel.CharacterInfoViewModelFactory::class)
 class CharacterInfoViewModel @AssistedInject constructor(
-    private val db: DatabaseApi,
+    private val db: AppDatabase,
     @Assisted characterId: Int
 ) : ViewModel() {
     @SuppressLint("LogNotTimber")

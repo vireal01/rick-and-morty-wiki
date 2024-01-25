@@ -1,4 +1,4 @@
-package com.example.rickandmortywiki.utils
+package com.example.rickandmortywiki.data.databse
 
 import androidx.room.TypeConverter
 

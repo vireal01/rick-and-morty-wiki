@@ -2,10 +2,9 @@ package com.example.rickandmortywiki.ui.charactersList
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rickandmortywiki.data.databse.DatabaseApi
+import com.example.rickandmortywiki.data.databse.AppDatabase
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
 import com.example.rickandmortywiki.data.entities.EpisodeWithCharacters
@@ -24,7 +23,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel(assistedFactory = CharactersListViewModel.CharactersListViewModelFactory::class)
 class CharactersListViewModel @AssistedInject constructor(
     private val apiService: Api,
-    private val db: DatabaseApi,
+    private val db: AppDatabase,
     @Assisted episodeId: Int
 ) : ViewModel() {
 
@@ -36,7 +35,7 @@ class CharactersListViewModel @AssistedInject constructor(
 
     private val _episodeWithCharacters = MutableStateFlow<EpisodeWithCharacters?>(null)
     val episodeWithCharacters: StateFlow<EpisodeWithCharacters?> = _episodeWithCharacters
-    val activeItem = mutableStateOf<CharacterEntity?>(null)
+    val activeItem: MutableStateFlow<CharacterEntity?> = MutableStateFlow(null)
 
     init {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {

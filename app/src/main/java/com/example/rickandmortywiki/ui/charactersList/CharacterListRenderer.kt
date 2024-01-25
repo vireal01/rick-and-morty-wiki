@@ -23,8 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoCardPreviewByLongTap
@@ -60,7 +62,7 @@ fun CharactersListRenderer(
                 verticalArrangement = Arrangement.spacedBy(Paddings.half),
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
             ) {
-                items(episodeWithCharacters) { item ->
+                items(episodeWithCharacters, key = { character -> character.characterId }) { item ->
                     CharactersListItem(
                         character = item,
                         viewModel = viewModel
@@ -68,10 +70,9 @@ fun CharactersListRenderer(
                 }
             }
         }
-
-        if (viewModel.activeItem.value != null) {
+        viewModel.activeItem.collectAsStateWithLifecycle().value?.let { safeActiveItem ->
             CharacterInfoCardPreviewByLongTap(
-                character = viewModel.activeItem.value!!,
+                character = safeActiveItem,
                 onClose = { viewModel.activeItem.value = null }
             )
         }
@@ -120,14 +121,18 @@ fun CharactersListItem(
                 Text(
                     text = character.name ?: "Unknown",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 // By long tap make preview dialog
                 // Body1 and Body2 diff 4.sp
                 Text(
                     text = "Status: ${character.status}",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
