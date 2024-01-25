@@ -8,9 +8,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-//    private val router by viewModels<Router>()
-//    private val navigator by lazy { Navigator(supportFragmentManager) }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -18,6 +15,5 @@ class MainActivity : AppCompatActivity() {
                 RickAndMortyApp()
             }
         }
-
     }
 }

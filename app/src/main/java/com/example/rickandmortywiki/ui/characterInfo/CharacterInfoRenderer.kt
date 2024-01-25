@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
-import com.example.rickandmortywiki.ui.charactersList.CharactersListViewModel
 import com.example.rickandmortywiki.ui.components.AsyncImageWithRainbowCircle
 import com.example.rickandmortywiki.ui.components.RickAndMortyTopAppBar
 

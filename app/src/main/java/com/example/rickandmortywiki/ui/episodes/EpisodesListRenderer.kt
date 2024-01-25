@@ -1,7 +1,6 @@
 package com.example.rickandmortywiki.ui.episodes
 
 import android.view.View
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,12 +42,8 @@ fun EpisodesListRenderer(
     onEpisodeClick: (EpisodeEntity) -> Unit = {},
     viewModel: EpisodesViewModel = hiltViewModel(),
     ) {
-//    val component by lazy { AppComponent.init() }
-//    val viewModel = daggerViewModel { component.episodesViewModel().build() }
     val episodes = viewModel.episodesList.collectAsState().value
     val loadModeBtnState = viewModel.loadMoreBtnState.collectAsState().value
-
-//    private val router by viewModels<Router>()
 
     Scaffold(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -68,7 +63,6 @@ fun EpisodesListRenderer(
                 EpisodesListItem(
                     item
                 ) { onEpisodeClick(item)
-//                    viewModel.onEpisodeClick(item)
                 }
             }
             if (loadModeBtnState == View.VISIBLE) {
@@ -133,7 +127,7 @@ private fun prettifyLastUpdateText(timestamp: Long?): String {
 }
 
 object EpisodesListTags {
-    val episodeTitle = "episode_list_episode_title"
-    val episodeTag = "episode_list_episode_tag"
-    val episodeContainer = "episode_list_episode_container"
+    const val episodeTitle = "episode_list_episode_title"
+    const val episodeTag = "episode_list_episode_tag"
+    const val episodeContainer = "episode_list_episode_container"
 }

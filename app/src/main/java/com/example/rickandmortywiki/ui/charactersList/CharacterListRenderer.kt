@@ -35,15 +35,13 @@ import com.example.rickandmortywiki.ui.components.RickAndMortyTopAppBar
 @Composable
 fun CharactersListRenderer(
     onBackClick: () -> Unit,
-    onCharacterClick : (CharacterEntity) -> Unit,
+    onCharacterClick: (CharacterEntity) -> Unit,
     episodeId: Int,
     viewModel: CharactersListViewModel = hiltViewModel(
         creationCallback = { factory: CharactersListViewModel.CharactersListViewModelFactory ->
             factory.build(episodeId)
         }),
 ) {
-
-
     val episodeWithCharacters =
         viewModel.episodeWithCharacters.collectAsState().value?.characters
     if (episodeWithCharacters != null) {

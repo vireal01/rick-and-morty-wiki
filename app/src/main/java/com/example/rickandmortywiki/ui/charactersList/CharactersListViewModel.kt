@@ -1,22 +1,15 @@
 package com.example.rickandmortywiki.ui.charactersList
 
 import android.annotation.SuppressLint
-import android.os.Bundle
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.savedstate.SavedStateRegistryOwner
 import com.example.rickandmortywiki.data.databse.DatabaseApi
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
 import com.example.rickandmortywiki.data.entities.EpisodeWithCharacters
-//import com.example.rickandmortywiki.navigation.Router
 import com.example.rickandmortywiki.network.api.Api
-import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoViewModel
 import com.example.rickandmortywiki.utils.mapNetworkCharacterToDataCharacterEntity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -27,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = CharactersListViewModel.CharactersListViewModelFactory::class)
 class CharactersListViewModel @AssistedInject constructor(

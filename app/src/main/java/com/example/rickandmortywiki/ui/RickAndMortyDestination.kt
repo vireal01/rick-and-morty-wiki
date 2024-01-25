@@ -17,7 +17,7 @@ sealed class RickAndMortyDestination(
             type = NavType.IntType
         })
     ) {
-        fun createRoute(episodeId: Int) = "characters/${episodeId}"
+        fun createRoute(episodeId: Int) = "characters/$episodeId"
     }
 
     data object CharacterInfo : RickAndMortyDestination(
@@ -26,6 +26,6 @@ sealed class RickAndMortyDestination(
             type = NavType.IntType
         }),
     ) {
-        fun createRoute(characterId: Int) = "characterInfo/${characterId}"
+        fun createRoute(characterId: Int) = "characterInfo/$characterId"
     }
 }

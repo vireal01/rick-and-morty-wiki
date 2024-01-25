@@ -1,7 +1,6 @@
 package com.example.rickandmortywiki.utils
 
 import android.os.Parcelable
-import androidx.compose.runtime.Composable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.createViewModelLazy
 import androidx.lifecycle.ViewModel

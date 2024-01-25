@@ -8,7 +8,6 @@ import com.example.rickandmortywiki.data.databse.DatabaseApi
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 import com.example.rickandmortywiki.network.api.Api
 import com.example.rickandmortywiki.utils.mapNetworkEpisodeToDataEpisodeEntity
-import dagger.assisted.AssistedFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -85,11 +84,6 @@ class EpisodesViewModel @Inject constructor(
     fun onLoadMoreBtnClicked() {
         getElementsFromNextPage()
     }
-
-//    @AssistedFactory
-//    interface Factory {
-//        fun build(): EpisodesViewModel
-//    }
 
     companion object {
         const val NUMBER_OF_EPISODES_IN_PACK = 20
