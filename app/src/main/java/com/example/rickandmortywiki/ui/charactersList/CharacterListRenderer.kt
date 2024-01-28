@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,32 +32,37 @@ import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoCardPreviewByLongTap
 import com.example.rickandmortywiki.ui.components.AsyncImageWithRainbowCircle
+import com.example.rickandmortywiki.ui.components.NoContentFound
 import com.example.rickandmortywiki.ui.components.RickAndMortyTopAppBar
+import com.example.rickandmortywiki.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CharactersListRenderer(
     onBackClick: () -> Unit,
     onCharacterClick: (CharacterEntity) -> Unit,
-    episodeId: Int,
+    episodeId: Int?,
     viewModel: CharactersListViewModel = hiltViewModel(
         creationCallback = { factory: CharactersListViewModel.CharactersListViewModelFactory ->
-            factory.build(episodeId)
+            factory.build(episodeId ?: -1)
         }),
 ) {
     val episodeWithCharacters =
         viewModel.episodeWithCharacters.collectAsState().value?.characters
-    if (episodeWithCharacters != null) {
-        Scaffold(
-            modifier = Modifier.background(MaterialTheme.colorScheme.background),
-            topBar = {
-                RickAndMortyTopAppBar(
-                    text = viewModel.episodeWithCharacters.collectAsState().value?.episode?.name.toString(),
-                ) {
-                    onBackClick()
-                }
-            },
-        ) { innerPadding ->
+    Scaffold(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        topBar = {
+            RickAndMortyTopAppBar(
+                text = viewModel.episodeWithCharacters.collectAsState().value?.episode?.name
+                    ?: stringResource(
+                        id = R.string.oops
+                    )
+            ) {
+                onBackClick()
+            }
+        },
+    ) { innerPadding ->
+        if (episodeWithCharacters != null) {
             LazyColumn(
                 contentPadding = PaddingValues(Paddings.one),
                 verticalArrangement = Arrangement.spacedBy(Paddings.half),
@@ -69,13 +75,17 @@ fun CharactersListRenderer(
                     ) { onCharacterClick(item) }
                 }
             }
-        }
-        viewModel.activeItem.collectAsStateWithLifecycle().value?.let { safeActiveItem ->
-            CharacterInfoCardPreviewByLongTap(
-                character = safeActiveItem,
-                onClose = { viewModel.activeItem.value = null }
+        } else {
+            NoContentFound(
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
             )
         }
+    }
+    viewModel.activeItem.collectAsStateWithLifecycle().value?.let { safeActiveItem ->
+        CharacterInfoCardPreviewByLongTap(
+            character = safeActiveItem,
+            onClose = { viewModel.activeItem.value = null }
+        )
     }
 }
 

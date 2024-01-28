@@ -27,6 +27,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
@@ -38,13 +39,15 @@ import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.components.AsyncImageWithRainbowCircle
 import com.example.rickandmortywiki.ui.components.RickAndMortyTopAppBar
+import com.example.rickandmortywiki.ui.components.NoContentFound
+import com.example.rickandmortywiki.R
 
 @Composable
 fun CharacterInfoRenderer(
-    characterId: Int,
+    characterId: Int?,
     viewModel: CharacterInfoViewModel = hiltViewModel(
         creationCallback = { factory: CharacterInfoViewModel.CharacterInfoViewModelFactory ->
-            factory.build(characterId)
+            factory.build(characterId ?: -1)
         }),
     onBackClick: () -> Unit,
 ) {
@@ -54,18 +57,23 @@ fun CharacterInfoRenderer(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
         topBar = {
             RickAndMortyTopAppBar(
-                text = character.value?.name.toString(),
+                text = character.value?.name ?: stringResource(id = R.string.oops),
             ) {
                 onBackClick()
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            character.value?.let {
-                safeValue ->
-                CharacterInfoCard(safeValue)
+        if (character.value == null) {
+            NoContentFound(
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
+            )
+        } else {
+            Column(
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                character.value?.let { safeValue ->
+                    CharacterInfoCard(safeValue)
+                }
             }
         }
     }

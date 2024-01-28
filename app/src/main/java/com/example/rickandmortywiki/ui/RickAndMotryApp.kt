@@ -45,28 +45,25 @@ fun RickAndMortyHost(
             route = RickAndMortyDestination.Characters.route,
             arguments = RickAndMortyDestination.Characters.navArgument
         ) {
-            navController.currentBackStackEntry?.arguments?.getInt("episodeId")?.let { it1 ->
-                CharactersListRenderer(
-                    onBackClick = { navController.navigateUp() },
-                    episodeId = it1,
-                    onCharacterClick = {
-                        navController.navigate(
-                            RickAndMortyDestination.CharacterInfo.createRoute(
-                                characterId = it.characterId
-                            )
+            CharactersListRenderer(
+                onBackClick = { navController.navigateUp() },
+                episodeId = navController.currentBackStackEntry?.arguments?.getInt("episodeId"),
+                onCharacterClick = {
+                    navController.navigate(
+                        RickAndMortyDestination.CharacterInfo.createRoute(
+                            characterId = it.characterId
                         )
-                    }
-                )
-            }
+                    )
+                }
+            )
         }
 
         composable(route = RickAndMortyDestination.CharacterInfo.route) {
-            navController.currentBackStackEntry?.arguments?.getString("characterId")?.let { it1 ->
-                CharacterInfoRenderer(
-                    characterId = it1.toInt(),
-                    onBackClick = { navController.navigateUp() },
-                )
-            }
+            CharacterInfoRenderer(
+                characterId = navController.currentBackStackEntry?.arguments?.getString("characterId")
+                    ?.toInt(),
+                onBackClick = { navController.navigateUp() },
+            )
         }
     }
 }
