@@ -3,11 +3,10 @@ package com.example.rickandmortywiki.ui
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoRenderer
-import com.example.rickandmortywiki.ui.charactersList.CharactersListRenderer
-import com.example.rickandmortywiki.ui.episodes.EpisodesListRenderer
+import com.example.rickandmortywiki.navigation.Screens
+import com.example.rickandmortywiki.navigation.main_flow.mainFlow
+import com.example.rickandmortywiki.navigation.onboarding_flow.nodes.onboarding
 
 @Composable
 fun RickAndMortyApp() {
@@ -23,47 +22,10 @@ fun RickAndMortyHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = RickAndMortyDestination.Episodes.route
+        startDestination = Screens.Onboarding.route
     ) {
-        composable(
-            route = RickAndMortyDestination.Episodes.route,
-            arguments = RickAndMortyDestination.Episodes.navArgument
-
-        ) { navBackStackEntity ->
-            EpisodesListRenderer(
-                onEpisodeClick = {
-                    navController.navigate(
-                        RickAndMortyDestination.Characters.createRoute(
-                            episodeId = it.episodeId
-                        )
-                    )
-                }
-            )
-        }
-
-        composable(
-            route = RickAndMortyDestination.Characters.route,
-            arguments = RickAndMortyDestination.Characters.navArgument
-        ) {
-            CharactersListRenderer(
-                onBackClick = { navController.navigateUp() },
-                episodeId = navController.currentBackStackEntry?.arguments?.getInt("episodeId"),
-                onCharacterClick = {
-                    navController.navigate(
-                        RickAndMortyDestination.CharacterInfo.createRoute(
-                            characterId = it.characterId
-                        )
-                    )
-                }
-            )
-        }
-
-        composable(route = RickAndMortyDestination.CharacterInfo.route) {
-            CharacterInfoRenderer(
-                characterId = navController.currentBackStackEntry?.arguments?.getString("characterId")
-                    ?.toInt(),
-                onBackClick = { navController.navigateUp() },
-            )
-        }
+        // TODO: The onboarding screen should opens only once (store state in shared preferences)
+        onboarding(navController)
+        mainFlow(navController)
     }
 }
