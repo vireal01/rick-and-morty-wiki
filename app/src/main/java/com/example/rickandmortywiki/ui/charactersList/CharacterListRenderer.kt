@@ -18,7 +18,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -27,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoCardPreviewByLongTap
@@ -49,6 +51,8 @@ fun CharactersListRenderer(
 ) {
     val episodeWithCharacters =
         viewModel.episodeWithCharacters.collectAsState().value?.characters
+
+    val activeItem = remember { mutableStateOf<CharacterEntity?>(null) }
     Scaffold(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
         topBar = {
@@ -71,7 +75,7 @@ fun CharactersListRenderer(
                 items(episodeWithCharacters, key = { character -> character.characterId }) { item ->
                     CharactersListItem(
                         character = item,
-                        viewModel = viewModel
+                        activeItem = activeItem
                     ) { onCharacterClick(item) }
                 }
             }
@@ -81,10 +85,10 @@ fun CharactersListRenderer(
             )
         }
     }
-    viewModel.activeItem.collectAsStateWithLifecycle().value?.let { safeActiveItem ->
+    activeItem.value?.let { safeActiveItem ->
         CharacterInfoCardPreviewByLongTap(
             character = safeActiveItem,
-            onClose = { viewModel.activeItem.value = null }
+            onClose = { activeItem.value = null }
         )
     }
 }
@@ -93,7 +97,7 @@ fun CharactersListRenderer(
 @Composable
 fun CharactersListItem(
     character: CharacterEntity,
-    viewModel: CharactersListViewModel,
+    activeItem: MutableState<CharacterEntity?>,
     onClick: () -> Unit
 ) {
 
@@ -110,7 +114,7 @@ fun CharactersListItem(
                     onClick = { onClick() },
                     onLongClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        viewModel.activeItem.value = character
+                        activeItem.value = character
                     },
                 )
                 .padding(vertical = Paddings.half, horizontal = Paddings.one)

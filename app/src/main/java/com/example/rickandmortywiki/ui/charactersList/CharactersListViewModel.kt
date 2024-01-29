@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortywiki.data.databse.AppDatabase
-import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
 import com.example.rickandmortywiki.data.entities.EpisodeWithCharacters
 import com.example.rickandmortywiki.network.api.Api
@@ -35,7 +34,6 @@ class CharactersListViewModel @AssistedInject constructor(
 
     private val _episodeWithCharacters = MutableStateFlow<EpisodeWithCharacters?>(null)
     val episodeWithCharacters: StateFlow<EpisodeWithCharacters?> = _episodeWithCharacters
-    val activeItem: MutableStateFlow<CharacterEntity?> = MutableStateFlow(null)
 
     init {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
