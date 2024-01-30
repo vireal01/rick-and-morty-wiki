@@ -2,7 +2,7 @@ package com.example.rickandmortywiki.ui.episodes
 
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
 
-sealed class RecyclerViewItemDataModel { // move to a separate file
+sealed class RecyclerViewItemDataModel {
     data class Item(
         val episode: EpisodeEntity
     ) : RecyclerViewItemDataModel()

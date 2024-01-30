@@ -9,7 +9,7 @@ import org.junit.BeforeClass
 import org.junit.Rule
 
 
-abstract class MainTest: TestContext {
+abstract class MainTest {
 
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)

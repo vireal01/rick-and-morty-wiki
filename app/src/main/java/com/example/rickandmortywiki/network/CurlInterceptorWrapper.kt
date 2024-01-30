@@ -6,7 +6,7 @@ import com.moczul.ok2curl.logger.Logger
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class CurlInterceptorWrapper: Interceptor {
+class CurlInterceptorWrapper : Interceptor {
 
     private val logger = object : Logger {
         override fun log(message: String) {

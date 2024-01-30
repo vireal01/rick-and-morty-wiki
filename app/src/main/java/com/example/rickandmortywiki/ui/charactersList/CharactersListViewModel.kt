@@ -1,7 +1,9 @@
 package com.example.rickandmortywiki.ui.charactersList
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortywiki.data.databse.DatabaseApi
+import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
 import com.example.rickandmortywiki.data.entities.EpisodeWithCharacters
 import com.example.rickandmortywiki.navigation.Router
@@ -26,11 +28,12 @@ class CharactersListViewModel @AssistedInject constructor(
 
     private val _episodeWithCharacters = MutableStateFlow<EpisodeWithCharacters?>(null)
     val episodeWithCharacters: StateFlow<EpisodeWithCharacters?> = _episodeWithCharacters
+    val activeItem = mutableStateOf<CharacterEntity?>(null)
 
     init {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             db.episodeWithCharacterDao().observerCharactersFromEpisode(episodeId = episodeId)
-                .collect{
+                .collect {
                     _episodeWithCharacters.value = it
                 }
         }
@@ -42,7 +45,7 @@ class CharactersListViewModel @AssistedInject constructor(
                 val character = mapNetworkCharacterToDataCharacterEntity(it)
                 if (character != null) {
                     db.episodeWithCharacterDao().insert(EpisodeCharacterCrossRef(episodeId, character.characterId))
-                    character.episodes?.forEach{
+                    character.episodes?.forEach {
                         db.episodeWithCharacterDao().insert(EpisodeCharacterCrossRef(it.toInt(), character.characterId))
                     }
                     db.characterDao().insertCharacter(character)

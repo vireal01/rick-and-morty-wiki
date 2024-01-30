@@ -27,6 +27,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.6"
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -36,13 +43,46 @@ android {
     }
     testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        unitTests.all {
+//          exclude '**/appium_tests/tests/*'
+//          exclude '**/units/*'
+        }
+    }
+
+    tasks.withType(Test) {
+        testLogging {
+            exceptionFormat "full"
+            events "started", "skipped", "passed", "failed"
+            showStandardStreams true
+        }
+    }
+
+
+    tasks.register('stopTomcat', Exec) {
+        commandLine './gradlew detekt'
+    }
+
+    tasks.named('build') {
+        dependsOn = tasks.findAll { task ->
+            task.name.startsWith('assemble') && task.name != 'detekt' && !task.name.startsWith('test')
+        }
+    }
+
+    detekt {
+        debug = true
+        ignoreFailures = false
+        config.from = files(
+                "${project.rootDir}/quality_config/detekt/config.yml"
+        )
+        buildUponDefaultConfig = true
     }
 }
+
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.fragment:fragment-ktx:1.6.1'
     implementation 'com.github.mrmike:ok2curl:0.8.0'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
@@ -50,11 +90,18 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation 'com.google.dagger:dagger:2.47'
-    implementation 'io.coil-kt:coil:2.4.0'
+    implementation 'io.coil-kt:coil:2.5.0'
+    implementation 'io.coil-kt:coil-compose:2.5.0'
+    implementation 'androidx.activity:activity-compose:1.8.2'
+    implementation 'androidx.compose.ui:ui:1.5.4'
+    implementation "androidx.compose.material3:material3:1.1.2"
+    implementation 'androidx.compose.material:material:1.5.4'
     kapt 'com.google.dagger:dagger-compiler:2.47'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.3")
 
     implementation("androidx.room:room-runtime:2.5.2")
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -65,5 +112,13 @@ dependencies {
     // To use Kotlin annotation processing tool (kapt)
     kapt("androidx.room:room-compiler:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
-}
+    implementation 'androidx.compose.ui:ui'
 
+    // Android Studio Preview support
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+
+    // Appium dependencies
+    testImplementation("com.github.appium:java-client:8.5.1")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.9.1")
+}
