@@ -18,55 +18,78 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.ui.Paddings
 import com.example.rickandmortywiki.ui.characterInfo.CharacterInfoCardPreviewByLongTap
 import com.example.rickandmortywiki.ui.components.AsyncImageWithRainbowCircle
+import com.example.rickandmortywiki.ui.components.NoContentFound
 import com.example.rickandmortywiki.ui.components.RickAndMortyTopAppBar
+import com.example.rickandmortywiki.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CharactersListRenderer(viewModel: CharactersListViewModel) {
-
+fun CharactersListRenderer(
+    onBackClick: () -> Unit,
+    onCharacterClick: (CharacterEntity) -> Unit,
+    episodeId: Int?,
+    viewModel: CharactersListViewModel = hiltViewModel(
+        creationCallback = { factory: CharactersListViewModel.CharactersListViewModelFactory ->
+            factory.build(episodeId ?: -1)
+        }),
+) {
     val episodeWithCharacters =
         viewModel.episodeWithCharacters.collectAsState().value?.characters
-    if (episodeWithCharacters != null) {
-        Scaffold(
-            modifier = Modifier.background(MaterialTheme.colorScheme.background),
-            topBar = {
-                RickAndMortyTopAppBar(
-                    text = viewModel.episodeWithCharacters.collectAsState().value?.episode?.name.toString(),
-                ) {
-                    viewModel.onBackPressed()
-                }
-            },
-        ) { innerPadding ->
+
+    val activeItem = remember { mutableStateOf<CharacterEntity?>(null) }
+    Scaffold(
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        topBar = {
+            RickAndMortyTopAppBar(
+                text = viewModel.episodeWithCharacters.collectAsState().value?.episode?.name
+                    ?: stringResource(
+                        id = R.string.oops
+                    )
+            ) {
+                onBackClick()
+            }
+        },
+    ) { innerPadding ->
+        if (episodeWithCharacters != null) {
             LazyColumn(
                 contentPadding = PaddingValues(Paddings.one),
                 verticalArrangement = Arrangement.spacedBy(Paddings.half),
                 modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
             ) {
-                items(episodeWithCharacters) { item ->
+                items(episodeWithCharacters, key = { character -> character.characterId }) { item ->
                     CharactersListItem(
-                        item,
-                        viewModel
-                    ) { viewModel.onViewCharacterItemClick(item.characterId) }
+                        character = item,
+                        activeItem = activeItem
+                    ) { onCharacterClick(item) }
                 }
             }
-        }
-
-        if (viewModel.activeItem.value != null) {
-            CharacterInfoCardPreviewByLongTap(
-                character = viewModel.activeItem.value!!,
-                onClose = { viewModel.activeItem.value = null }
+        } else {
+            NoContentFound(
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
             )
         }
+    }
+    activeItem.value?.let { safeActiveItem ->
+        CharacterInfoCardPreviewByLongTap(
+            character = safeActiveItem,
+            onClose = { activeItem.value = null }
+        )
     }
 }
 
@@ -74,7 +97,7 @@ fun CharactersListRenderer(viewModel: CharactersListViewModel) {
 @Composable
 fun CharactersListItem(
     character: CharacterEntity,
-    viewModel: CharactersListViewModel,
+    activeItem: MutableState<CharacterEntity?>,
     onClick: () -> Unit
 ) {
 
@@ -91,7 +114,7 @@ fun CharactersListItem(
                     onClick = { onClick() },
                     onLongClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        viewModel.activeItem.value = character
+                        activeItem.value = character
                     },
                 )
                 .padding(vertical = Paddings.half, horizontal = Paddings.one)
@@ -112,14 +135,18 @@ fun CharactersListItem(
                 Text(
                     text = character.name ?: "Unknown",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 // By long tap make preview dialog
                 // Body1 and Body2 diff 4.sp
                 Text(
                     text = "Status: ${character.status}",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

@@ -1,25 +1,32 @@
 package com.example.rickandmortywiki.ui.characterInfo
 
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rickandmortywiki.data.databse.DatabaseApi
+import com.example.rickandmortywiki.data.databse.AppDatabase
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.CharacterWithEpisodes
-import com.example.rickandmortywiki.navigation.Router
-import com.example.rickandmortywiki.ui.BaseViewModel
-import com.example.rickandmortywiki.ui.charactersList.CharactersListScreen
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+@HiltViewModel(assistedFactory = CharacterInfoViewModel.CharacterInfoViewModelFactory::class)
 class CharacterInfoViewModel @AssistedInject constructor(
-    private val router: Router,
-    private val db: DatabaseApi,
+    private val db: AppDatabase,
     @Assisted characterId: Int
-) : BaseViewModel() {
+) : ViewModel() {
+    @SuppressLint("LogNotTimber")
+    protected val exceptionHandler =
+        CoroutineExceptionHandler { _, e ->
+            Log.e("Error!!", e.toString())
+        }
 
     private val _character = MutableStateFlow<CharacterEntity?>(null)
     val character: StateFlow<CharacterEntity?> = _character
@@ -39,16 +46,8 @@ class CharacterInfoViewModel @AssistedInject constructor(
         }
     }
 
-    fun onBackPressed() {
-        router.closeScreen()
-    }
-
-    fun onViewEpisodeItemClick(episodeId: Int) {
-        router.navigateTo(CharactersListScreen(episodeId))
-    }
-
     @AssistedFactory
-    interface Factory {
+    interface CharacterInfoViewModelFactory {
         fun build(characterId: Int): CharacterInfoViewModel
     }
 }

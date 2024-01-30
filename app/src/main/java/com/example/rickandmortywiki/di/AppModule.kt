@@ -3,17 +3,19 @@ package com.example.rickandmortywiki.di
 import android.app.Application
 import androidx.room.Room
 import com.example.rickandmortywiki.data.databse.AppDatabase
-import com.example.rickandmortywiki.data.databse.DatabaseApi
 import com.example.rickandmortywiki.network.CurlInterceptorWrapper
 import com.example.rickandmortywiki.network.api.Api
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class AppModule {
     @Singleton
     @Provides
@@ -23,7 +25,7 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun db(context: Application): DatabaseApi = Room.databaseBuilder(
+    fun db(context: Application): AppDatabase = Room.databaseBuilder(
         context.applicationContext,
         AppDatabase::class.java,
         "rick_and_morty_database"

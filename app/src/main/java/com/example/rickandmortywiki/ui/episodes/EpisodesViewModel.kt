@@ -1,26 +1,33 @@
 package com.example.rickandmortywiki.ui.episodes
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.View
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rickandmortywiki.data.databse.DatabaseApi
+import com.example.rickandmortywiki.data.databse.AppDatabase
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
-import com.example.rickandmortywiki.navigation.Router
 import com.example.rickandmortywiki.network.api.Api
-import com.example.rickandmortywiki.ui.BaseViewModel
-import com.example.rickandmortywiki.ui.charactersList.CharactersListScreen
 import com.example.rickandmortywiki.utils.mapNetworkEpisodeToDataEpisodeEntity
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class EpisodesViewModel @AssistedInject constructor(
-    private val router: Router,
+@HiltViewModel
+class EpisodesViewModel @Inject constructor(
     private val apiService: Api,
-    private val db: DatabaseApi
-) : BaseViewModel() {
+    private val db: AppDatabase
+) : ViewModel() {
+
+    @SuppressLint("LogNotTimber")
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, e ->
+            Log.e("Error!!", e.toString())
+        }
 
     private val _loadMoreBtnState = MutableStateFlow(View.VISIBLE)
     val loadMoreBtnState: StateFlow<Int> = _loadMoreBtnState
@@ -76,15 +83,6 @@ class EpisodesViewModel @AssistedInject constructor(
 
     fun onLoadMoreBtnClicked() {
         getElementsFromNextPage()
-    }
-
-    fun onEpisodeClick(episode: EpisodeEntity) {
-        router.navigateTo(CharactersListScreen(episode.episodeId))
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun build(): EpisodesViewModel
     }
 
     companion object {

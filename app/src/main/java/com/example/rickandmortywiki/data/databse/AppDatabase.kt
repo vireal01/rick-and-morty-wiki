@@ -9,14 +9,11 @@ import com.example.rickandmortywiki.data.dao.EpisodeWithCharacterDao
 import com.example.rickandmortywiki.data.entities.CharacterEntity
 import com.example.rickandmortywiki.data.entities.EpisodeCharacterCrossRef
 import com.example.rickandmortywiki.data.entities.EpisodeEntity
-import com.example.rickandmortywiki.utils.Converters
 
 @Database(entities = [CharacterEntity::class, EpisodeEntity::class, EpisodeCharacterCrossRef::class], version = 1)
 @TypeConverters(Converters::class)
-abstract class AppDatabase : RoomDatabase(), DatabaseApi
-
-interface DatabaseApi {
-    fun characterDao(): CharacterDao
-    fun episodeDao(): EpisodeDao
-    fun episodeWithCharacterDao(): EpisodeWithCharacterDao
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun characterDao(): CharacterDao
+    abstract fun episodeDao(): EpisodeDao
+    abstract fun episodeWithCharacterDao(): EpisodeWithCharacterDao
 }

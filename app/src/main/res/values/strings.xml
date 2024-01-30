@@ -9,4 +9,7 @@
     <string name="episodes_title">Episodes</string>
     <string name="appears_in_title">Appears in:</string>
     <string name="load_more_btn">Load More</string>
+    <string name="no_content_found">No content found..</string>
+    <string name="something_went_wrong">Sorry, Something went wrong</string>
+    <string name="oops">Oops..</string>
 </resources>
