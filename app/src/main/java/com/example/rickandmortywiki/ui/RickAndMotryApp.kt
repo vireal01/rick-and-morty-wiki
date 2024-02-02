@@ -1,7 +1,6 @@
 package com.example.rickandmortywiki.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,10 +14,8 @@ import com.example.rickandmortywiki.ui.onboarding.UserStateViewModel
 fun RickAndMortyApp(
     viewModel: UserStateViewModel = hiltViewModel(),
 ) {
-    val isShowOnboarding = viewModel.showOnboarding.collectAsState().value
-    viewModel.showUserPreferencesFlow()
+    val isShowOnboarding = viewModel.showOnboarding
     val startDestination = if (isShowOnboarding) Screens.Onboarding else Screens.MainAppContent
-
     val navController = rememberNavController()
 
     RickAndMortyHost(
@@ -39,7 +36,6 @@ fun RickAndMortyHost(
         navController = navController,
         startDestination = startDestination.route
     ) {
-        //TODO: Onboarding screen show for a sec until the DataStore value reads. Fix it with splash??
         onboarding(navController, userStateViewModel)
         mainFlow(navController)
     }
