@@ -29,6 +29,8 @@ class UserStateViewModel @Inject constructor(
         }
     }
 
+    suspend fun getShowOnboardingState(): Boolean = userPreferencesFlow.first().showOnboarding
+
     val initialSetupEvent = liveData {
         emit(userPreferencesRepository.fetchInitialPreferences())
     }

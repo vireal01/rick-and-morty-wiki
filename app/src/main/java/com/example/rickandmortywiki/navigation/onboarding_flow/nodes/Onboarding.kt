@@ -1,10 +1,10 @@
 package com.example.rickandmortywiki.navigation.onboarding_flow.nodes
 
-import OnboardingScreen
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.rickandmortywiki.navigation.Screens
+import com.example.rickandmortywiki.ui.onboarding.OnboardingScreen
 import com.example.rickandmortywiki.ui.onboarding.UserStateViewModel
 
 fun NavGraphBuilder.onboarding(
