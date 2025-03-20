@@ -1,7 +1,7 @@
 <h2> UI and Unit Tests </h2>
 There are 2 kind of UI tests: 
 
-- Espresso (TODO: Rewrite the tests to compose for the `compose_layouts` brunch)
+- Espresso (TODO: Rewrite the tests to Jetpack Compose testing framework in the `compose_layouts` branch)
 - Appium
 
  The `Espresso` tests are located in `androidTest` dirrectory. And for the `compose_layouts` they are kinda useless,
